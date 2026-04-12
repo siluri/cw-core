@@ -83,6 +83,16 @@ export const siteData = {
     ctaSecondary: undefined as { label: string; href: string } | undefined,
   },
 
+  // ─── Leistungen / Produkte ───────────────────────────────────────────────
+  // Zeigt eine Leistungs-Section auf der Startseite (wichtig für SEO + Conversion).
+  // href optional: verlinkt auf eigene Leistungs-Detailseite (z.B. '/leistungen/elektro')
+  leistungen: [
+    { icon: '🔧', title: 'TODO: Leistung 1', description: 'TODO: 1-2 Sätze was das konkret bedeutet.', href: undefined as string | undefined },
+    { icon: '⚡', title: 'TODO: Leistung 2', description: 'TODO: 1-2 Sätze was das konkret bedeutet.', href: undefined as string | undefined },
+    { icon: '🏠', title: 'TODO: Leistung 3', description: 'TODO: 1-2 Sätze was das konkret bedeutet.', href: undefined as string | undefined },
+    { icon: '📞', title: 'TODO: Leistung 4', description: 'TODO: 1-2 Sätze was das konkret bedeutet.', href: undefined as string | undefined },
+  ],
+
   // ─── USPs (4 Stück empfohlen) ─────────────────────────────────────────────
   usps: [
     { icon: '⚡', title: 'TODO: USP 1', description: 'TODO: 1 Satz Erklärung' },
