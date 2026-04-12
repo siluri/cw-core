@@ -31,14 +31,13 @@ const src = `https://tally.so/embed/${formId}?alignLeft=1${transparentBackground
 <div class="tally-embed-wrapper">
   <iframe
     data-tally-src={src}
-    loading="lazy"
     width="100%"
     height={height === 'auto' ? '0' : height}
     frameborder="0"
     marginheight="0"
     marginwidth="0"
     title="Kontaktformular"
-    style={height === 'auto' ? 'min-height: 200px;' : ''}
+    style={height === 'auto' ? 'min-height: 500px; width: 100%;' : ''}
   ></iframe>
 
   <!-- Fallback: sichtbar wenn JS aus oder Tally nicht lädt -->

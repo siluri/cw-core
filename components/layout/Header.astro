@@ -52,7 +52,13 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
     color: white;
     text-decoration: none;
   }
-  .logo img { display: block; }
+  /* Logo auf dunklem Header: filter macht alle Farben weiß.
+     Kunden mit farbigem Logo legen /logo-white.svg in public/ ab.
+     Ohne Filter wären dunkle Logo-Teile auf dunklem Header unsichtbar. */
+  .logo img {
+    display: block;
+    filter: brightness(0) invert(1);
+  }
   #main-nav {
     display: flex;
     align-items: center;
