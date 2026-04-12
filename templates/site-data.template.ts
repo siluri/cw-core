@@ -33,7 +33,7 @@ export const siteData = {
   contact: {
     email: 'TODO: info@firma.de',
     phone: 'TODO: +49 123 456789',    // Gleich wie legal.phone
-    tallyFormId: 'TODO',              // Tally.so Form-ID – Formular duplizieren!
+    web3formsKey: 'TODO',             // web3forms.com → kostenlos registrieren, Access Key kopieren
     calendlyUrl: '',                  // Optional: Calendly-Booking-URL
   },
 
@@ -203,8 +203,7 @@ export const siteData = {
     stellen: [
       // { titel: 'Elektriker/in (m/w/d)', typ: 'Vollzeit', beschreibung: 'TODO...' },
     ],
-    tallyFormId: 'TODO',             // Eigene Tally-Form für Bewerbungen duplizieren
-    kontaktEmail: 'TODO: jobs@firma.de',
+    kontaktEmail: 'TODO: jobs@firma.de',  // Bewerbungen: nutzt contact.web3formsKey mit Betreff "Bewerbung bei..."
   },
 } as const;
 

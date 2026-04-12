@@ -1,11 +1,11 @@
 ---
 // @cw/core – BewerbungsForm.astro
-// Tally-Embed für Bewerbungen + Fallback-Kontakt wenn kein Tally konfiguriert
-import TallyEmbed from '@cw/core/components/forms/TallyEmbed.astro';
+// Native Bewerbungsform via Web3Forms + Fallback-Kontakt wenn kein Key konfiguriert
+import ContactForm from '@cw/core/components/forms/ContactForm.astro';
 import { siteData } from '@/data/site-data';
 
 const karriere = siteData.karriere!;
-const hasTally = !!karriere.tallyFormId;
+const hasFormKey = !!siteData.contact?.web3formsKey && !siteData.contact.web3formsKey.startsWith('TODO');
 const kontaktEmail = karriere.kontaktEmail ?? siteData.contact.email;
 ---
 <section class="bewerbung-section" id="bewerbung">
@@ -17,10 +17,12 @@ const kontaktEmail = karriere.kontaktEmail ?? siteData.contact.email;
       </p>
     </div>
 
-    {hasTally ? (
+    {hasFormKey ? (
       <div class="form-wrap">
-        <TallyEmbed
-          formId={karriere.tallyFormId!}
+        <ContactForm
+          formKey={siteData.contact.web3formsKey!}
+          subject={`Bewerbung bei ${siteData.name}`}
+          formType="bewerbung"
           fallbackEmail={kontaktEmail}
         />
       </div>
