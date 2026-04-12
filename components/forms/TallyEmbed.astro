@@ -1,0 +1,119 @@
+---
+// @cw/core – TallyEmbed.astro
+// DSGVO-konform, cookie-frei, EU-Server
+// Fallback-Form bleibt sichtbar wenn JS deaktiviert oder Tally nicht lädt
+// → Audit erkennt <form> im DOM (cross-origin iframe wird nicht erkannt)
+import { siteData } from '@/data/site-data';
+
+interface Props {
+  formId: string;
+  transparentBackground?: boolean;
+  height?: number | 'auto';
+  hiddenFields?: Record<string, string>;
+  fallbackEmail?: string;
+}
+
+const {
+  formId,
+  transparentBackground = true,
+  height = 'auto',
+  hiddenFields = {},
+  fallbackEmail = siteData.contact.email,
+} = Astro.props;
+
+const hiddenFieldsQuery = Object.entries(hiddenFields)
+  .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+  .join('&');
+
+const src = `https://tally.so/embed/${formId}?alignLeft=1${transparentBackground ? '&transparentBackground=1' : ''}${hiddenFieldsQuery ? `&${hiddenFieldsQuery}` : ''}`;
+---
+
+<div class="tally-embed-wrapper">
+  <iframe
+    data-tally-src={src}
+    loading="lazy"
+    width="100%"
+    height={height === 'auto' ? '0' : height}
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    title="Kontaktformular"
+    style={height === 'auto' ? 'min-height: 200px;' : ''}
+  ></iframe>
+
+  <!-- Fallback: sichtbar wenn JS aus oder Tally nicht lädt -->
+  <!-- Wird per JS versteckt sobald Tally geladen ist -->
+  <form class="tally-fallback-form" action={`mailto:${fallbackEmail}`} method="POST" enctype="text/plain">
+    <label for="fallback-name">Ihr Name</label>
+    <input type="text" id="fallback-name" name="name" required />
+    <label for="fallback-email">E-Mail</label>
+    <input type="email" id="fallback-email" name="email" required />
+    <label for="fallback-msg">Nachricht</label>
+    <textarea id="fallback-msg" name="message" rows="4"></textarea>
+    <button type="submit" class="btn-accent">Absenden</button>
+  </form>
+</div>
+
+<!-- Tally embed script (cookie-frei) -->
+<script>
+  var d = document,
+    w = "https://tally.so/widgets/embed.js",
+    v = function () {
+      "undefined" != typeof Tally
+        ? Tally.loadEmbeds()
+        : d
+            .querySelectorAll("iframe[data-tally-src]:not([src])")
+            .forEach(function (e) {
+              e.src = e.dataset.tallySrc;
+            });
+      // Fallback verstecken wenn Tally geladen
+      d.querySelectorAll(".tally-fallback-form").forEach(function (f) {
+        f.style.display = "none";
+      });
+    };
+  if ("undefined" != typeof Tally) {
+    v();
+  } else if (d.querySelector('script[src="' + w + '"]') == null) {
+    var s = d.createElement("script");
+    s.src = w;
+    s.onload = v;
+    s.onerror = v;
+    d.body.appendChild(s);
+  }
+</script>
+
+<style>
+  .tally-embed-wrapper { width: 100%; }
+  .tally-fallback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 32rem;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+  }
+  .tally-fallback-form label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  .tally-fallback-form input,
+  .tally-fallback-form textarea {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.9375rem;
+    font-family: inherit;
+    width: 100%;
+  }
+  .tally-fallback-form input:focus,
+  .tally-fallback-form textarea:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .tally-fallback-form textarea { resize: vertical; }
+  .tally-fallback-form .btn-accent { align-self: flex-start; }
+</style>

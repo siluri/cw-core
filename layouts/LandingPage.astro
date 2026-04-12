@@ -1,0 +1,24 @@
+---
+// @cw/core – LandingPage.astro
+// Marketing/Landing pages: BaseLayout + Header + Footer
+import BaseLayout from '@cw/core/layouts/BaseLayout.astro';
+import Header from '@cw/core/components/layout/Header.astro';
+import Footer from '@cw/core/components/layout/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  robots?: string;
+}
+
+const { title, description, ogImage, canonicalUrl, robots } = Astro.props;
+---
+<BaseLayout title={title} description={description} ogImage={ogImage} canonicalUrl={canonicalUrl} robots={robots}>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,22 @@
+{
+  "name": "@cw/core",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Shared Astro components, layouts and styles for customer websites",
+  "exports": {
+    "./layouts/*": "./layouts/*",
+    "./components/*": "./components/*",
+    "./styles/*": "./styles/*",
+    "./templates/*": "./templates/*"
+  },
+  "peerDependencies": {
+    "astro": ">=5.0.0",
+    "tailwindcss": ">=4.0.0"
+  },
+  "devDependencies": {
+    "schema-dts": "^2.0.0"
+  },
+  "keywords": ["astro", "components", "customer-websites"],
+  "license": "UNLICENSED",
+  "private": true
+}
