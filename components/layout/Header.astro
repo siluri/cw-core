@@ -36,6 +36,8 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
     background: var(--color-primary);
     color: white;
     box-shadow: 0 1px 8px rgba(0,0,0,0.3);
+    /* Containing block für den absolut positionierten Mobile-Nav */
+    isolation: isolate;
   }
   header .container {
     display: flex;
@@ -100,11 +102,13 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
       top: 100%;
       left: 0;
       right: 0;
-      background: var(--color-primary-light);
+      background: var(--color-primary-light, var(--color-primary, #1D1E3B));
       flex-direction: column;
       align-items: stretch;
       padding: 1rem 1.5rem 1.5rem;
       gap: 0;
+      z-index: 49;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
     #main-nav.open { display: flex; }
     #main-nav a:not(.btn-accent) {

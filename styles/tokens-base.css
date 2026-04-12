@@ -60,6 +60,12 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-accent-hover);
   transform: translateY(-1px);
 }
+.btn-accent:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.8;
+}
 
 .btn-outline {
   display: inline-flex;

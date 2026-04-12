@@ -108,7 +108,10 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
       <div class="form-submit">
         <button type="submit" class="btn-accent">
           <span class="btn-label">Absenden</span>
-          <span class="btn-loading" aria-hidden="true" hidden>Wird gesendet…</span>
+          <span class="btn-loading" aria-hidden="true" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            Wird gesendet…
+          </span>
         </button>
       </div>
     </form>
@@ -153,6 +156,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
       if (btnLabel) btnLabel.hidden = true;
       if (btnLoading) btnLoading.hidden = false;
       if (error) error.hidden = true;
+      form.dataset.submitting = 'true';
 
       try {
         const data = new FormData(form);
@@ -185,6 +189,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         if (btnLabel) btnLabel.hidden = false;
         if (btnLoading) btnLoading.hidden = true;
         if (error) error.hidden = false;
+        delete form.dataset.submitting;
       }
     });
   });
@@ -239,6 +244,27 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
   .contact-form textarea { resize: vertical; }
 
   .form-submit { margin-top: 0.5rem; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Form ausgegraut während Submit */
+  .contact-form[data-submitting] input,
+  .contact-form[data-submitting] textarea,
+  .contact-form[data-submitting] select {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 
   /* Erfolg */
   .form-success {
