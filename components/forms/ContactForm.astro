@@ -1,39 +1,49 @@
 ---
 // @cw/core – ContactForm.astro
-// Natives HTML-Form via Web3Forms API — kein iframe, DSGVO-konform, Webhook-Support
-// Primär: AJAX + Inline-Erfolgsmeldung | Fallback (kein JS): native POST zu Web3Forms
+// Natives HTML-Form — kein iframe, DSGVO-konform
+// Primär: AJAX + Inline-Erfolgsmeldung | Fallback (kein JS): native POST
+// actionUrl: wenn gesetzt, direkt POST an eigenen Endpoint statt Web3Forms
 import { siteData } from '@/data/site-data';
 
 interface Props {
-  formKey: string;
+  formKey?: string;
   subject?: string;
   formType?: 'contact' | 'audit' | 'bewerbung';
   fallbackEmail?: string;
+  actionUrl?: string;
 }
 
 const {
-  formKey,
+  formKey = '',
   subject = `Neue Anfrage – ${siteData.name}`,
   formType = 'contact',
   fallbackEmail = siteData.contact.email,
+  actionUrl,
 } = Astro.props;
 
-const hasKey = !!formKey && !formKey.startsWith('TODO');
+const useWeb3Forms = !actionUrl;
+const hasKey = useWeb3Forms ? (!!formKey && !formKey.startsWith('TODO')) : true;
+const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
 ---
 
 {hasKey ? (
   <div class="contact-form-wrap">
     <form
       class="contact-form"
-      action="https://api.web3forms.com/submit"
+      action={submitUrl}
       method="POST"
       data-web3form
+      data-submit-url={submitUrl}
     >
-      <input type="hidden" name="access_key" value={formKey} />
-      <input type="hidden" name="subject" value={subject} />
-      <input type="hidden" name="from_name" value={siteData.name} />
-      <!-- Honeypot Spam-Schutz -->
-      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+      {useWeb3Forms && (
+        <>
+          <input type="hidden" name="access_key" value={formKey} />
+          <input type="hidden" name="subject" value={subject} />
+          <input type="hidden" name="from_name" value={siteData.name} />
+          <!-- Honeypot Spam-Schutz -->
+          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+        </>
+      )}
 
       {formType === 'contact' && (
         <>
@@ -146,12 +156,25 @@ const hasKey = !!formKey && !formKey.startsWith('TODO');
 
       try {
         const data = new FormData(form);
-        const res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: data,
-        });
-        const json = await res.json() as { success: boolean; message?: string };
-        if (json.success) {
+        const submitUrl = form.dataset.submitUrl ?? 'https://api.web3forms.com/submit';
+        const isCustomEndpoint = !!form.dataset.submitUrl && !submitUrl.includes('web3forms.com');
+
+        let res: Response;
+        if (isCustomEndpoint) {
+          // Eigener Endpoint: JSON senden (Vercel parst multipart/form-data nicht automatisch)
+          const obj: Record<string, string> = {};
+          data.forEach((v, k) => { if (typeof v === 'string') obj[k] = v; });
+          res = await fetch(submitUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(obj),
+          });
+        } else {
+          res = await fetch(submitUrl, { method: 'POST', body: data });
+        }
+
+        const json = await res.json() as { success?: boolean; ok?: boolean; message?: string };
+        if (json.success || json.ok) {
           (form as HTMLElement).hidden = true;
           if (success) success.hidden = false;
         } else {
