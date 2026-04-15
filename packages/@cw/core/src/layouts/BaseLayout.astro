@@ -87,8 +87,10 @@ interface Props {
   ogLocale?: string;
   /** Plausible script src. If set, the Plausible snippet is injected. */
   plausibleScript?: string;
-  /** Plausible host for preconnect. Defaults to "https://plausible.io". */
+  /** Plausible host for preconnect. Defaults to "https://plausible.io". Set to undefined when proxying same-origin. */
   plausibleHost?: string;
+  /** Plausible API endpoint override. Set to "/api/event" when proxying via Vercel rewrites. */
+  plausibleEndpoint?: string;
   /** Schema.org props forwarded to `<SchemaOrg/>`. If omitted, `<SchemaOrg/>` is not rendered. */
   schema?: SchemaProps;
 }
@@ -109,6 +111,7 @@ const {
   ogLocale = 'de_DE',
   plausibleScript,
   plausibleHost = 'https://plausible.io',
+  plausibleEndpoint,
   schema,
 } = Astro.props;
 
@@ -146,13 +149,13 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
     <!-- Plausible Analytics (cookie-frei, DSGVO-konform) -->
     {plausibleScript && (
       <>
-        <link rel="preconnect" href={plausibleHost} />
+        {!plausibleEndpoint && <link rel="preconnect" href={plausibleHost} />}
         <script is:inline async src={plausibleScript}></script>
-        <script is:inline>
+        <script is:inline define:vars={{ endpoint: plausibleEndpoint }}>
           // @ts-nocheck
           window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};
           window.plausible.init=window.plausible.init||function(i){window.plausible.o=i||{}};
-          window.plausible.init();
+          window.plausible.init(endpoint ? { endpoint: endpoint } : undefined);
         </script>
       </>
     )}
