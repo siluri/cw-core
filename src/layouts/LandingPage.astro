@@ -81,6 +81,8 @@ interface Props {
   defaultOgImage: string;
   /** Plausible script src. */
   plausibleScript?: string;
+  /** Plausible API endpoint override (for same-origin proxy setups). */
+  plausibleEndpoint?: string;
   /** Schema.org props. */
   schema?: SchemaProps;
   /** Header config. */
@@ -102,6 +104,7 @@ const {
   titleTemplate,
   defaultOgImage,
   plausibleScript,
+  plausibleEndpoint,
   schema,
   header = {},
   footer,
@@ -120,6 +123,7 @@ const {
   titleTemplate={titleTemplate}
   defaultOgImage={defaultOgImage}
   plausibleScript={plausibleScript}
+  plausibleEndpoint={plausibleEndpoint}
   schema={schema}
 >
   <Header

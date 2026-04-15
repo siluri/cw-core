@@ -69,6 +69,7 @@ interface Props {
   titleTemplate?: string;
   defaultOgImage: string;
   plausibleScript?: string;
+  plausibleEndpoint?: string;
   schema?: SchemaProps;
   header?: HeaderConfig;
   footer: FooterConfig;
@@ -87,6 +88,7 @@ const {
   titleTemplate,
   defaultOgImage,
   plausibleScript,
+  plausibleEndpoint,
   schema,
   header = {},
   footer,
@@ -105,6 +107,7 @@ const {
   titleTemplate={titleTemplate}
   defaultOgImage={defaultOgImage}
   plausibleScript={plausibleScript}
+  plausibleEndpoint={plausibleEndpoint}
   schema={schema}
 >
   <Header
