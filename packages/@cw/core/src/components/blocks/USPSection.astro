@@ -1,11 +1,33 @@
 ---
-// @cw/core – USPSection.astro
-import { siteData } from '@/data/site-data';
+/**
+ * @cw/core – USPSection.astro
+ *
+ * Grid of USP/value-prop cards. Prop-driven: no `@/data/site-data` import.
+ *
+ * @example
+ *   <USPSection items={siteData.usps} />
+ */
+export interface USPItem {
+  /** Emoji or short string used as visual icon. */
+  icon: string;
+  /** Card heading. */
+  title: string;
+  /** Card body copy. */
+  description: string;
+}
+
+interface Props {
+  /** USP items to render. Section is omitted entirely if empty. */
+  items?: USPItem[];
+}
+
+const { items = [] } = Astro.props;
 ---
+{items.length > 0 && (
 <section class="usp-section">
   <div class="container">
     <div class="usp-grid">
-      {siteData.usps.map((usp) => (
+      {items.map((usp) => (
         <div class="usp-card">
           <div class="usp-icon" aria-hidden="true">{usp.icon}</div>
           <h3>{usp.title}</h3>
@@ -15,6 +37,7 @@ import { siteData } from '@/data/site-data';
     </div>
   </div>
 </section>
+)}
 
 <style>
   .usp-section { padding: 5rem 0; background: var(--color-surface); }

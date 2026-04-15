@@ -1,62 +1,153 @@
 ---
-// @cw/core – BaseLayout.astro
-// Convention: customer MUST provide src/data/site-data.ts and src/styles/tokens.css
-import { siteData } from '@/data/site-data';
-import SchemaOrg from '@cw/core/components/seo/SchemaOrg.astro';
+/**
+ * @cw/core – BaseLayout.astro
+ *
+ * Base HTML document with `<head>` (title, meta, OG, Twitter, Plausible,
+ * Schema.org) and `<body><slot/></body>`. Prop-driven: no
+ * `@/data/site-data` import. Customer is still expected to provide
+ * `src/styles/tokens.css` (loaded via the `@/styles/tokens.css` alias).
+ *
+ * The customer site should wrap this layout (or use LandingPage /
+ * ContentPage) and pass site-wide data (`siteName`, `siteUrl`,
+ * `defaultTitle`, `seo`, etc.) explicitly.
+ *
+ * @example
+ *   <BaseLayout
+ *     title="Kontakt"
+ *     siteName={siteData.name}
+ *     siteUrl={siteData.url}
+ *     defaultTitle={siteData.seo.defaultTitle}
+ *     defaultDescription={siteData.seo.defaultDescription}
+ *     titleTemplate={siteData.seo.titleTemplate}
+ *     defaultOgImage={siteData.seo.ogImage}
+ *     plausibleScript={siteData.analytics?.plausibleScript}
+ *     schema={{
+ *       name: siteData.name,
+ *       description: siteData.description,
+ *       url: siteData.url,
+ *       ogImage: siteData.seo.ogImage,
+ *       street: siteData.legal.street,
+ *       zip: siteData.legal.zip,
+ *       city: siteData.legal.city,
+ *       country: siteData.legal.country,
+ *       email: siteData.contact.email,
+ *       phone: siteData.contact.phone,
+ *     }}
+ *   >
+ *     <slot />
+ *   </BaseLayout>
+ */
+import SchemaOrg from '../components/seo/SchemaOrg.astro';
 import '@/styles/tokens.css';
 
+export interface SchemaProps {
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+  logoUrl?: string;
+  street?: string;
+  zip?: string;
+  city?: string;
+  country?: string;
+  email?: string;
+  phone?: string;
+  areaServed?: string;
+  priceRange?: string;
+  sameAs?: string[];
+  availableLanguage?: string[];
+}
+
 interface Props {
+  /** Page-specific title fragment. Combined with `titleTemplate`. */
   title?: string;
+  /** Page-specific description (overrides `defaultDescription`). */
   description?: string;
+  /** Page-specific OG image (overrides `defaultOgImage`). */
   ogImage?: string;
+  /** Optional canonical URL override. Defaults to `${siteUrl}${pathname}`. */
   canonicalUrl?: string;
+  /** Optional robots meta value. */
   robots?: string;
+  /** Site name (fallback for several defaults). */
+  siteName?: string;
+  /** Canonical site URL (no trailing slash). Required for absolute OG/canonical URLs. */
+  siteUrl: string;
+  /** Title used when `title` is not provided. */
+  defaultTitle: string;
+  /** Description used when `description` is not provided. */
+  defaultDescription: string;
+  /** Title template; `%s` is replaced with `title`. Defaults to `%s | ${siteName}`. */
+  titleTemplate?: string;
+  /** OG image used when `ogImage` not provided. */
+  defaultOgImage: string;
+  /** HTML lang attribute. Defaults to "de". */
+  lang?: string;
+  /** OG locale. Defaults to "de_DE". */
+  ogLocale?: string;
+  /** Plausible script src. If set, the Plausible snippet is injected. */
+  plausibleScript?: string;
+  /** Plausible host for preconnect. Defaults to "https://plausible.io". */
+  plausibleHost?: string;
+  /** Schema.org props forwarded to `<SchemaOrg/>`. If omitted, `<SchemaOrg/>` is not rendered. */
+  schema?: SchemaProps;
 }
 
 const {
   title,
-  description = siteData.seo.defaultDescription,
-  ogImage = siteData.seo.ogImage,
+  description,
+  ogImage,
   canonicalUrl,
   robots,
+  siteName = '',
+  siteUrl,
+  defaultTitle,
+  defaultDescription,
+  titleTemplate,
+  defaultOgImage,
+  lang = 'de',
+  ogLocale = 'de_DE',
+  plausibleScript,
+  plausibleHost = 'https://plausible.io',
+  schema,
 } = Astro.props;
 
-const pageTitle = title
-  ? siteData.seo.titleTemplate.replace('%s', title)
-  : siteData.seo.defaultTitle;
-
-const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteData.url).toString();
-const ogImageUrl = new URL(ogImage, siteData.url).toString();
+const resolvedDescription = description ?? defaultDescription;
+const resolvedOgImage = ogImage ?? defaultOgImage;
+const resolvedTitleTemplate = titleTemplate ?? (siteName ? `%s | ${siteName}` : '%s');
+const pageTitle = title ? resolvedTitleTemplate.replace('%s', title) : defaultTitle;
+const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).toString();
+const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
 ---
 <!doctype html>
-<html lang="de">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={resolvedDescription} />
     <link rel="canonical" href={canonical} />
     {robots && <meta name="robots" content={robots} />}
 
     <!-- OG Tags -->
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={resolvedDescription} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={resolvedDescription} />
     <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Plausible Analytics (cookie-frei, DSGVO-konform) -->
-    {siteData.analytics?.plausibleScript && (
+    {plausibleScript && (
       <>
-        <link rel="preconnect" href="https://plausible.io" />
-        <script is:inline async src={siteData.analytics.plausibleScript}></script>
+        <link rel="preconnect" href={plausibleHost} />
+        <script is:inline async src={plausibleScript}></script>
         <script is:inline>
           // @ts-nocheck
           window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};
@@ -67,7 +158,25 @@ const ogImageUrl = new URL(ogImage, siteData.url).toString();
     )}
 
     <!-- Schema.org JSON-LD -->
-    <SchemaOrg />
+    {schema && (
+      <SchemaOrg
+        name={schema.name}
+        description={schema.description}
+        url={schema.url}
+        ogImage={schema.ogImage}
+        logoUrl={schema.logoUrl}
+        street={schema.street}
+        zip={schema.zip}
+        city={schema.city}
+        country={schema.country}
+        email={schema.email}
+        phone={schema.phone}
+        areaServed={schema.areaServed}
+        priceRange={schema.priceRange}
+        sameAs={schema.sameAs}
+        availableLanguage={schema.availableLanguage}
+      />
+    )}
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

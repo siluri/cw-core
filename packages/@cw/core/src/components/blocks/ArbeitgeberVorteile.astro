@@ -1,19 +1,55 @@
 ---
-// @cw/core – ArbeitgeberVorteile.astro
-// Benefits-Grid für Karriere-Seite
-import { siteData } from '@/data/site-data';
-const benefits = siteData.karriere?.benefits ?? [];
+/**
+ * @cw/core – ArbeitgeberVorteile.astro
+ *
+ * Benefits-Grid für Karriere-Seite. Prop-driven: no `@/data/site-data`
+ * import.
+ *
+ * @example
+ *   <ArbeitgeberVorteile
+ *     items={siteData.karriere?.benefits ?? []}
+ *     siteName={siteData.name}
+ *   />
+ */
+export interface BenefitItem {
+  /** Emoji or short string used as icon. */
+  icon: string;
+  /** Benefit title. */
+  title: string;
+  /** Benefit description. */
+  description: string;
+}
+
+interface Props {
+  /** Benefit cards. Section is omitted entirely if empty. */
+  items?: BenefitItem[];
+  /** Site/employer name (interpolated into subheading). */
+  siteName?: string;
+  /** Optional override for the section heading. */
+  heading?: string;
+  /** Optional override for the section subheading. `{siteName}` is replaced. */
+  subheadingTemplate?: string;
+}
+
+const {
+  items = [],
+  siteName = '',
+  heading = 'Was wir bieten',
+  subheadingTemplate = 'Warum {siteName} ein guter Arbeitgeber ist.',
+} = Astro.props;
+
+const subheading = subheadingTemplate.replace('{siteName}', siteName);
 ---
-{benefits.length > 0 && (
+{items.length > 0 && (
 <section class="vorteile-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-heading">Was wir bieten</h2>
-      <p class="section-subheading">Warum {siteData.name} ein guter Arbeitgeber ist.</p>
+      <h2 class="section-heading">{heading}</h2>
+      <p class="section-subheading">{subheading}</p>
     </div>
 
     <div class="vorteile-grid">
-      {benefits.map((benefit) => (
+      {items.map((benefit) => (
         <div class="vorteil-card">
           <div class="vorteil-icon" aria-hidden="true">{benefit.icon}</div>
           <h3>{benefit.title}</h3>

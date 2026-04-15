@@ -1,16 +1,59 @@
 ---
-// @cw/core – KarriereHero.astro
+/**
+ * @cw/core – KarriereHero.astro
+ *
+ * Hero section for career pages. Optional split layout when a team image
+ * is provided. Prop-driven: no `@/data/site-data` import.
+ *
+ * @example
+ *   <KarriereHero
+ *     siteName={siteData.name}
+ *     headline={siteData.karriere?.headline}
+ *     subtext={siteData.karriere?.subtext}
+ *     teamImage={siteData.images?.aboutTeam}
+ *   />
+ */
 import { Image } from 'astro:assets';
-import { siteData } from '@/data/site-data';
+import type { ImageMetadata } from 'astro';
 
-const karriere = siteData.karriere!;
-const headline = karriere.headline ?? `Karriere bei ${siteData.name}`;
-const subtext = karriere.subtext ?? `Wir suchen Verstärkung. Werde Teil unseres Teams.`;
-const teamImage = siteData.images?.aboutTeam;
+interface Props {
+  /** Site/employer name (used in default headline + image alt). */
+  siteName?: string;
+  /** Optional override for the headline. Defaults to `Karriere bei ${siteName}`. */
+  headline?: string;
+  /** Optional override for the subtext. */
+  subtext?: string;
+  /** Optional team image. Accepts Astro ImageMetadata or a URL string. */
+  teamImage?: ImageMetadata | string;
+  /** Alt text override for the team image. Defaults to `Team ${siteName}`. */
+  teamImageAlt?: string;
+  /** Badge text. Defaults to "Wir stellen ein". */
+  badge?: string;
+  /** CTA label. Defaults to "Offene Stellen ansehen". */
+  ctaLabel?: string;
+  /** CTA href. Defaults to "#stellen". */
+  ctaHref?: string;
+}
+
+const {
+  siteName = '',
+  headline,
+  subtext,
+  teamImage,
+  teamImageAlt,
+  badge = 'Wir stellen ein',
+  ctaLabel = 'Offene Stellen ansehen',
+  ctaHref = '#stellen',
+} = Astro.props;
+
+const resolvedHeadline = headline ?? `Karriere bei ${siteName}`;
+const resolvedSubtext = subtext ?? 'Wir suchen Verstärkung. Werde Teil unseres Teams.';
+const resolvedAlt = teamImageAlt ?? `Team ${siteName}`;
+const hasImage = !!teamImage;
 ---
 <section class="karriere-hero">
   <div class="container">
-    <div class:list={['hero-content', teamImage && 'hero-content--split']}>
+    <div class:list={['hero-content', hasImage && 'hero-content--split']}>
       <div class="hero-text">
         <div class="hero-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -19,22 +62,34 @@ const teamImage = siteData.images?.aboutTeam;
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
-          Wir stellen ein
+          {badge}
         </div>
-        <h1>{headline}</h1>
-        <p class="hero-sub">{subtext}</p>
-        <a href="#stellen" class="btn-accent">Offene Stellen ansehen</a>
+        <h1>{resolvedHeadline}</h1>
+        <p class="hero-sub">{resolvedSubtext}</p>
+        <a href={ctaHref} class="btn-accent">{ctaLabel}</a>
       </div>
 
-      {teamImage && (
+      {hasImage && typeof teamImage !== 'string' && (
         <div class="hero-image-wrap">
           <Image
-            src={teamImage}
-            alt={`Team ${siteData.name}`}
+            src={teamImage!}
+            alt={resolvedAlt}
             width={560}
             height={400}
             loading="eager"
             format="webp"
+            class="hero-img"
+          />
+        </div>
+      )}
+      {hasImage && typeof teamImage === 'string' && (
+        <div class="hero-image-wrap">
+          <img
+            src={teamImage}
+            alt={resolvedAlt}
+            width={560}
+            height={400}
+            loading="eager"
             class="hero-img"
           />
         </div>

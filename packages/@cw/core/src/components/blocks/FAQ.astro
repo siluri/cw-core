@@ -1,22 +1,47 @@
 ---
-// @cw/core – FAQ.astro
-// Inhalte kommen aus siteData.faqs (nicht mehr hardcoded)
-// Enthält FAQPage JSON-LD für Google + AI-Auffindbarkeit
-import { siteData } from '@/data/site-data';
-const faqs = siteData.faqs ?? [];
+/**
+ * @cw/core – FAQ.astro
+ *
+ * Accordion FAQ list with Schema.org FAQPage JSON-LD for Google + AI
+ * discoverability. Prop-driven: no `@/data/site-data` import.
+ *
+ * @example
+ *   <FAQ items={siteData.faqs} />
+ */
+export interface FAQItem {
+  /** Question text. */
+  q: string;
+  /** Answer text (plain string). */
+  a: string;
+}
+
+interface Props {
+  /** FAQ entries. Section is omitted entirely if empty. */
+  items?: FAQItem[];
+  /** Optional override for the section heading. */
+  heading?: string;
+  /** Optional override for the section subheading. */
+  subheading?: string;
+}
+
+const {
+  items = [],
+  heading = 'Häufige Fragen',
+  subheading = 'Alles Wichtige auf einen Blick.',
+} = Astro.props;
 ---
-{faqs.length > 0 && (
+{items.length > 0 && (
 <section class="faq-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-heading">Häufige Fragen</h2>
-      <p class="section-subheading">Alles Wichtige auf einen Blick.</p>
+      <h2 class="section-heading">{heading}</h2>
+      <p class="section-subheading">{subheading}</p>
     </div>
 
-    <script type="application/ld+json" set:html={JSON.stringify({
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: faqs.map(item => ({
+      mainEntity: items.map(item => ({
         '@type': 'Question',
         name: item.q,
         acceptedAnswer: { '@type': 'Answer', text: item.a },
@@ -24,7 +49,7 @@ const faqs = siteData.faqs ?? [];
     })} />
 
     <div class="faq-list">
-      {faqs.map((item) => (
+      {items.map((item) => (
         <details class="faq-item" name="faq">
           <summary>
             <span>{item.q}</span>

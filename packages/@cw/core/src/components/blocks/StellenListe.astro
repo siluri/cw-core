@@ -1,13 +1,58 @@
 ---
-// @cw/core – StellenListe.astro
-// Zeigt offene Stellen aus siteData.karriere.stellen
-// Wenn leer: generischer Initiativbewerbung-Block
-// JobPosting JSON-LD für Google for Jobs
-import { siteData } from '@/data/site-data';
+/**
+ * @cw/core – StellenListe.astro
+ *
+ * Open-positions list with JobPosting JSON-LD for Google for Jobs. Falls
+ * back to a generic "Initiativbewerbung" panel when no positions are
+ * provided. Prop-driven: no `@/data/site-data` import.
+ *
+ * @example
+ *   <StellenListe
+ *     items={siteData.karriere?.stellen ?? []}
+ *     siteName={siteData.name}
+ *     siteUrl={siteData.url}
+ *     city={siteData.legal.city}
+ *     country={siteData.legal.country}
+ *     kontaktEmail={siteData.karriere?.kontaktEmail ?? siteData.contact.email}
+ *   />
+ */
+export type StelleTyp = 'Vollzeit' | 'Teilzeit' | 'Ausbildung' | string;
 
-const karriere = siteData.karriere!;
-const stellen = karriere.stellen ?? [];
-const hasStellen = stellen.length > 0;
+export interface StelleItem {
+  /** Job title. */
+  titel: string;
+  /** Employment type. Mapped to schema.org employmentType. */
+  typ: StelleTyp;
+  /** Optional job description. */
+  beschreibung?: string;
+}
+
+interface Props {
+  /** Open positions. Empty array triggers the Initiativbewerbung fallback. */
+  items?: StelleItem[];
+  /** Site/employer name (for JSON-LD hiringOrganization + subheading). */
+  siteName?: string;
+  /** Canonical site URL (for JSON-LD hiringOrganization.sameAs). */
+  siteUrl?: string;
+  /** City of employment (JSON-LD jobLocation.address.addressLocality). */
+  city?: string;
+  /** ISO country code. Defaults to "DE". */
+  country?: string;
+  /** Contact email for the Initiativbewerbung fallback. */
+  kontaktEmail?: string;
+}
+
+const {
+  items = [],
+  siteName = '',
+  siteUrl = '',
+  city = '',
+  country = 'DE',
+  kontaktEmail = '',
+} = Astro.props;
+
+const hasStellen = items.length > 0;
+const datePosted = new Date().toISOString().split('T')[0];
 ---
 <section class="stellen-section" id="stellen">
   <div class="container">
@@ -17,7 +62,7 @@ const hasStellen = stellen.length > 0;
       </h2>
       <p class="section-subheading">
         {hasStellen
-          ? `${stellen.length} offene Position${stellen.length !== 1 ? 'en' : ''} bei ${siteData.name}`
+          ? `${items.length} offene Position${items.length !== 1 ? 'en' : ''} bei ${siteName}`
           : 'Keine passende Stelle dabei? Bewirb dich initiativ – wir freuen uns auf dich.'}
       </p>
     </div>
@@ -25,8 +70,8 @@ const hasStellen = stellen.length > 0;
     {hasStellen ? (
       <>
         {/* JobPosting JSON-LD für Google for Jobs */}
-        <script type="application/ld+json" set:html={JSON.stringify(
-          stellen.map((stelle) => ({
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(
+          items.map((stelle: StelleItem) => ({
             '@context': 'https://schema.org',
             '@type': 'JobPosting',
             title: stelle.titel,
@@ -37,23 +82,23 @@ const hasStellen = stellen.length > 0;
               : 'FULL_TIME',
             hiringOrganization: {
               '@type': 'Organization',
-              name: siteData.name,
-              sameAs: siteData.url,
+              name: siteName,
+              sameAs: siteUrl,
             },
             jobLocation: {
               '@type': 'Place',
               address: {
                 '@type': 'PostalAddress',
-                addressLocality: siteData.legal.city,
-                addressCountry: siteData.legal.country ?? 'DE',
+                addressLocality: city,
+                addressCountry: country,
               },
             },
-            datePosted: new Date().toISOString().split('T')[0],
+            datePosted,
           }))
         )} />
 
         <div class="stellen-list">
-          {stellen.map((stelle) => (
+          {items.map((stelle: StelleItem) => (
             <div class="stelle-card">
               <div class="stelle-header">
                 <div>
@@ -74,9 +119,9 @@ const hasStellen = stellen.length > 0;
         <div class="initiativ-icon" aria-hidden="true">📬</div>
         <p>
           Schick uns einfach deine Bewerbungsunterlagen an{' '}
-          <a href={`mailto:${karriere.kontaktEmail ?? siteData.contact.email}`}>
-            {karriere.kontaktEmail ?? siteData.contact.email}
-          </a>{' '}
+          {kontaktEmail && (
+            <a href={`mailto:${kontaktEmail}`}>{kontaktEmail}</a>
+          )}{' '}
           – oder nutze das Formular unten.
         </p>
         <a href="#bewerbung" class="btn-accent">Initiativ bewerben</a>

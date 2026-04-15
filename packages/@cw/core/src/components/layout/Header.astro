@@ -1,25 +1,70 @@
 ---
-// @cw/core – Header.astro
-// Logo: uses /logo.svg from customer's public/ dir.
-// Nav: driven by siteData.nav.main. Karriere link shown when siteData.karriere?.enabled !== false.
-import { siteData } from '@/data/site-data';
+/**
+ * @cw/core – Header.astro
+ *
+ * Sticky site header with logo + main navigation + mobile hamburger.
+ * Prop-driven: no `@/data/site-data` import.
+ *
+ * @example
+ *   <Header
+ *     siteName={siteData.name}
+ *     navItems={siteData.nav.main}
+ *     showKarriereLink={siteData.karriere?.enabled !== false}
+ *   />
+ */
+export interface NavItem {
+  /** Link label. */
+  label: string;
+  /** Link target. */
+  href: string;
+  /** When true, renders as accent button (CTA). */
+  highlight?: boolean;
+}
 
-const karriereEnabled = siteData.karriere?.enabled !== false;
+interface Props {
+  /** Site name (used as logo alt + text). */
+  siteName: string;
+  /** Logo image path. Defaults to `/logo.svg`. */
+  logoSrc?: string;
+  /** Logo width in px. */
+  logoWidth?: number;
+  /** Logo height in px. */
+  logoHeight?: number;
+  /** Main nav items. */
+  navItems?: NavItem[];
+  /** Whether to render the "/karriere" link. */
+  showKarriereLink?: boolean;
+  /** Karriere link label. Defaults to "Karriere". */
+  karriereLabel?: string;
+  /** Karriere link href. Defaults to "/karriere". */
+  karriereHref?: string;
+}
+
+const {
+  siteName,
+  logoSrc = '/logo.svg',
+  logoWidth = 58,
+  logoHeight = 28,
+  navItems = [],
+  showKarriereLink = false,
+  karriereLabel = 'Karriere',
+  karriereHref = '/karriere',
+} = Astro.props;
 ---
 <header id="site-header">
   <div class="container">
-    <a href="/" class="logo" aria-label={`${siteData.name} – Startseite`}>
-      <img src="/logo.svg" alt={siteData.name} width="58" height="28" loading="eager" />
-      <span>{siteData.name}</span>
+    <a href="/" class="logo" aria-label={`${siteName} – Startseite`}>
+      <img src={logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="eager" />
+      <span>{siteName}</span>
     </a>
 
     <nav id="main-nav" aria-label="Hauptnavigation">
-      {(siteData.nav?.main ?? []).map((item) =>
+      {navItems.map((item: NavItem) =>
         item.highlight
           ? <a href={item.href} class="btn-accent">{item.label}</a>
           : <a href={item.href}>{item.label}</a>
       )}
-      {karriereEnabled && <a href="/karriere">Karriere</a>}
+      {showKarriereLink && <a href={karriereHref}>{karriereLabel}</a>}
     </nav>
 
     <button id="nav-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Menü öffnen">

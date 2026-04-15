@@ -1,19 +1,51 @@
 ---
-// @cw/core – ProcessSteps.astro
-// Inhalte kommen aus siteData.processSteps (nicht mehr hardcoded)
-import { siteData } from '@/data/site-data';
-const steps = siteData.processSteps ?? [];
+/**
+ * @cw/core – ProcessSteps.astro
+ *
+ * Numbered "how it works" step grid. Prop-driven: no `@/data/site-data`
+ * import.
+ *
+ * @example
+ *   <ProcessSteps items={siteData.processSteps} />
+ */
+export interface ProcessStep {
+  /** Step number (rendered as large faded background number). */
+  nr: string | number;
+  /** Emoji or short string used as visual icon. */
+  icon: string;
+  /** Step title. */
+  title: string;
+  /** Step description. */
+  desc: string;
+}
+
+interface Props {
+  /** Step entries. Section is omitted entirely if empty. */
+  items?: ProcessStep[];
+  /** Optional override for the section heading. */
+  heading?: string;
+  /** Optional override for the section subheading. `{count}` is replaced with `items.length`. */
+  subheadingTemplate?: string;
+}
+
+const {
+  items = [],
+  heading = "So funktioniert's",
+  subheadingTemplate = 'Von Erstgespräch bis Live-Gang in {count} einfachen Schritten.',
+} = Astro.props;
+
+const subheading = subheadingTemplate.replace('{count}', String(items.length));
 ---
-{steps.length > 0 && (
+{items.length > 0 && (
 <section class="process-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-heading">So funktioniert's</h2>
-      <p class="section-subheading">Von Erstgespräch bis Live-Gang in {steps.length} einfachen Schritten.</p>
+      <h2 class="section-heading">{heading}</h2>
+      <p class="section-subheading">{subheading}</p>
     </div>
 
     <div class="steps">
-      {steps.map((step) => (
+      {items.map((step) => (
         <div class="step">
           <div class="step-nr" aria-hidden="true">{step.nr}</div>
           <div class="step-body">
