@@ -1,26 +1,148 @@
 ---
-// @cw/core – ContentPage.astro
-// Legal/content pages: BaseLayout + Header + styled h1 + Footer
-import BaseLayout from '@cw/core/layouts/BaseLayout.astro';
-import Header from '@cw/core/components/layout/Header.astro';
-import Footer from '@cw/core/components/layout/Footer.astro';
+/**
+ * @cw/core – ContentPage.astro
+ *
+ * Legal/content page wrapper: BaseLayout + Header + styled `<h1>` +
+ * slot + Footer. Prop-driven: forwards all SEO/site/header/footer/schema
+ * props to the underlying components.
+ *
+ * @example
+ *   <ContentPage
+ *     title="Impressum"
+ *     siteName={siteData.name}
+ *     siteUrl={siteData.url}
+ *     defaultTitle={siteData.seo.defaultTitle}
+ *     defaultDescription={siteData.seo.defaultDescription}
+ *     defaultOgImage={siteData.seo.ogImage}
+ *     header={{ navItems: siteData.nav.main }}
+ *     footer={{ siteName: siteData.name }}
+ *   >
+ *     <p>...</p>
+ *   </ContentPage>
+ */
+import BaseLayout, { type SchemaProps } from './BaseLayout.astro';
+import Header, { type NavItem } from '../components/layout/Header.astro';
+import Footer, { type FooterLink } from '../components/layout/Footer.astro';
 
-interface Props {
-  title: string;
-  description?: string;
+export interface HeaderConfig {
+  logoSrc?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  navItems?: NavItem[];
+  showKarriereLink?: boolean;
+  karriereLabel?: string;
+  karriereHref?: string;
 }
 
-const { title, description } = Astro.props;
+export interface FooterConfig {
+  siteName: string;
+  tagline?: string;
+  description?: string;
+  email?: string;
+  phone?: string;
+  logoSrc?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  owner?: string;
+  legalForm?: string;
+  city?: string;
+  leistungenHeading?: string;
+  leistungenLinks?: FooterLink[];
+  rechtlichesHeading?: string;
+  rechtlichesLinks?: FooterLink[];
+  showKarriereLink?: boolean;
+  karriereLabel?: string;
+  karriereHref?: string;
+}
+
+interface Props {
+  /** Page title (rendered as `<h1>` and used in `<title>`). */
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  robots?: string;
+  siteName: string;
+  siteUrl: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  titleTemplate?: string;
+  defaultOgImage: string;
+  plausibleScript?: string;
+  schema?: SchemaProps;
+  header?: HeaderConfig;
+  footer: FooterConfig;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  canonicalUrl,
+  robots,
+  siteName,
+  siteUrl,
+  defaultTitle,
+  defaultDescription,
+  titleTemplate,
+  defaultOgImage,
+  plausibleScript,
+  schema,
+  header = {},
+  footer,
+} = Astro.props;
 ---
-<BaseLayout title={title} description={description}>
-  <Header />
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalUrl={canonicalUrl}
+  robots={robots}
+  siteName={siteName}
+  siteUrl={siteUrl}
+  defaultTitle={defaultTitle}
+  defaultDescription={defaultDescription}
+  titleTemplate={titleTemplate}
+  defaultOgImage={defaultOgImage}
+  plausibleScript={plausibleScript}
+  schema={schema}
+>
+  <Header
+    siteName={siteName}
+    logoSrc={header.logoSrc}
+    logoWidth={header.logoWidth}
+    logoHeight={header.logoHeight}
+    navItems={header.navItems}
+    showKarriereLink={header.showKarriereLink}
+    karriereLabel={header.karriereLabel}
+    karriereHref={header.karriereHref}
+  />
   <main class="content-page">
     <div class="container">
       <h1>{title}</h1>
       <slot />
     </div>
   </main>
-  <Footer />
+  <Footer
+    siteName={footer.siteName}
+    tagline={footer.tagline}
+    description={footer.description}
+    email={footer.email}
+    phone={footer.phone}
+    logoSrc={footer.logoSrc}
+    logoWidth={footer.logoWidth}
+    logoHeight={footer.logoHeight}
+    owner={footer.owner}
+    legalForm={footer.legalForm}
+    city={footer.city}
+    leistungenHeading={footer.leistungenHeading}
+    leistungenLinks={footer.leistungenLinks}
+    rechtlichesHeading={footer.rechtlichesHeading}
+    rechtlichesLinks={footer.rechtlichesLinks}
+    showKarriereLink={footer.showKarriereLink}
+    karriereLabel={footer.karriereLabel}
+    karriereHref={footer.karriereHref}
+  />
 </BaseLayout>
 
 <style>

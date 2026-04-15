@@ -1,21 +1,58 @@
 ---
-// @cw/core – Testimonials.astro
-// Inhalte kommen aus siteData.testimonials (nicht mehr hardcoded)
-// Schema.org Review Markup für Auffindbarkeit
-import { siteData } from '@/data/site-data';
-const testimonials = siteData.testimonials ?? [];
+/**
+ * @cw/core – Testimonials.astro
+ *
+ * Customer testimonial grid with Schema.org Review markup. Prop-driven:
+ * no `@/data/site-data` import.
+ *
+ * @example
+ *   <Testimonials items={siteData.testimonials} siteName={siteData.name} />
+ */
+export interface Testimonial {
+  /** Star rating (1-5). */
+  stars: number;
+  /** Review body / quote. */
+  text: string;
+  /** Reviewer name. */
+  name: string;
+  /** Reviewer role/company. */
+  role: string;
+}
+
+interface Props {
+  /** Testimonial entries. Section is omitted if empty. */
+  items?: Testimonial[];
+  /** Site name used in itemprop="name" for the reviewed Product. */
+  siteName?: string;
+  /** Optional override for the section heading. */
+  heading?: string;
+  /** Optional override for the section subheading. */
+  subheading?: string;
+  /** Optional override for the Product itemprop name (defaults to `${siteName} Website-Service`). */
+  productName?: string;
+}
+
+const {
+  items = [],
+  siteName = '',
+  heading = 'Das sagen unsere Kunden',
+  subheading = 'Bewertungen von Unternehmen aus der Region.',
+  productName,
+} = Astro.props;
+
+const itempropName = productName ?? `${siteName} Website-Service`;
 ---
-{testimonials.length > 0 && (
+{items.length > 0 && (
 <section class="testimonials-section" itemscope itemtype="https://schema.org/Product">
-  <meta itemprop="name" content={`${siteData.name} Website-Service`} />
+  <meta itemprop="name" content={itempropName} />
   <div class="container">
     <div class="section-header">
-      <h2 class="section-heading">Das sagen unsere Kunden</h2>
-      <p class="section-subheading">Bewertungen von Unternehmen aus der Region.</p>
+      <h2 class="section-heading">{heading}</h2>
+      <p class="section-subheading">{subheading}</p>
     </div>
 
     <div class="testimonials-grid">
-      {testimonials.map((t) => (
+      {items.map((t) => (
         <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
           <div class="stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
             <meta itemprop="ratingValue" content={String(t.stars)} />

@@ -1,29 +1,72 @@
 ---
-// @cw/core – PaketeSection.astro
-// Referenz-Pattern für Pricing (aus Blitzsicht-Audit dokumentiert):
-// • 3-Spalten-Grid, mittlere Karte mit shadow-xl + negativem Margin
-// • Badge absolut oben als Pill
-// • Inline-SVG Checkmarks (kein Icon-Library-Import)
-// • CTA als Pill (border-radius: 100px)
-// • Preisdarstellung: 2.25rem bold
-import { siteData } from '@/data/site-data';
+/**
+ * @cw/core – PaketeSection.astro
+ *
+ * Pricing/packages section. Prop-driven: no `@/data/site-data` import.
+ *
+ * Layout pattern (from Blitzsicht-Audit):
+ * - 3-column grid; middle card with shadow-xl + negative margin
+ * - Badge absolutely positioned as pill above the card
+ * - Inline SVG checkmarks (no icon library import)
+ * - CTA as pill (border-radius: 100px)
+ * - Price display: 2.25rem bold
+ *
+ * @example
+ *   <PaketeSection items={siteData.packages} />
+ */
+export interface PaketeItem {
+  /** Package name (large heading). */
+  name: string;
+  /** Subtitle / eyebrow. */
+  subtitle: string;
+  /** One-time setup price (number, formatted with de-DE locale). */
+  priceSetup: number;
+  /** Monthly recurring price (number). */
+  priceMonthly: number;
+  /** Optional pages/scope hint (rendered as small pill). */
+  pages?: string;
+  /** Bullet feature list. */
+  features: string[];
+  /** If true, the card is highlighted (accent border, shadow, "Meistgewählt" badge). */
+  highlighted?: boolean;
+  /** CTA href; defaults to `/kontakt`. */
+  ctaHref?: string;
+  /** CTA label; defaults to `${name} anfragen`. */
+  ctaLabel?: string;
+}
 
 interface Props {
+  /** Package cards. */
+  items?: PaketeItem[];
+  /** Whether to render the section header. */
   showTitle?: boolean;
+  /** Optional override for the section heading. */
+  heading?: string;
+  /** Optional override for the section subheading. */
+  subheading?: string;
+  /** Footnote rendered below the grid. */
+  note?: string;
 }
-const { showTitle = true } = Astro.props;
+
+const {
+  items = [],
+  showTitle = true,
+  heading = 'Transparente Preise. Keine Überraschungen.',
+  subheading = 'Einmalige Einrichtung + monatliche Betreuung. Alle Preise netto zzgl. 19\u00a0% MwSt.',
+  note = 'Alle Pakete: Source-Code gehört Ihnen · Hosting + Domain inklusive · DSGVO-konform ohne Cookie-Banner',
+} = Astro.props;
 ---
 <section class="pakete-section">
   <div class="container">
     {showTitle && (
       <div class="section-header">
-        <h2 class="section-heading">Transparente Preise. Keine Überraschungen.</h2>
-        <p class="section-subheading">Einmalige Einrichtung + monatliche Betreuung. Alle Preise netto zzgl. 19&nbsp;% MwSt.</p>
+        <h2 class="section-heading">{heading}</h2>
+        <p class="section-subheading" set:html={subheading} />
       </div>
     )}
 
     <div class="pakete-grid">
-      {siteData.packages.map((pkg) => (
+      {items.map((pkg) => (
         <div class:list={['paket-card', pkg.highlighted && 'highlighted']}>
           {pkg.highlighted && <span class="highlight-badge">Meistgewählt</span>}
           <p class="paket-eyebrow">{pkg.subtitle}</p>
@@ -62,9 +105,7 @@ const { showTitle = true } = Astro.props;
       ))}
     </div>
 
-    <p class="pakete-note">
-      Alle Pakete: Source-Code gehört Ihnen · Hosting + Domain inklusive · DSGVO-konform ohne Cookie-Banner
-    </p>
+    {note && <p class="pakete-note">{note}</p>}
   </div>
 </section>
 

@@ -1,9 +1,65 @@
 ---
-// @cw/core – LandingPage.astro
-// Marketing/Landing pages: BaseLayout + Header + Footer
-import BaseLayout from '@cw/core/layouts/BaseLayout.astro';
-import Header from '@cw/core/components/layout/Header.astro';
-import Footer from '@cw/core/components/layout/Footer.astro';
+/**
+ * @cw/core – LandingPage.astro
+ *
+ * Marketing/landing page wrapper: BaseLayout + Header + main slot +
+ * Footer. Prop-driven: forwards all SEO/site/header/footer/schema props
+ * to the underlying components.
+ *
+ * @example
+ *   <LandingPage
+ *     title="Startseite"
+ *     siteName={siteData.name}
+ *     siteUrl={siteData.url}
+ *     defaultTitle={siteData.seo.defaultTitle}
+ *     defaultDescription={siteData.seo.defaultDescription}
+ *     defaultOgImage={siteData.seo.ogImage}
+ *     header={{ navItems: siteData.nav.main, showKarriereLink: true }}
+ *     footer={{
+ *       siteName: siteData.name,
+ *       email: siteData.contact.email,
+ *       leistungenLinks: siteData.nav.footer.leistungen,
+ *       rechtlichesLinks: siteData.nav.footer.rechtliches,
+ *     }}
+ *     schema={{ name: siteData.name, description: siteData.description, url: siteData.url, ogImage: siteData.seo.ogImage }}
+ *   >
+ *     <slot />
+ *   </LandingPage>
+ */
+import BaseLayout, { type SchemaProps } from './BaseLayout.astro';
+import Header, { type NavItem } from '../components/layout/Header.astro';
+import Footer, { type FooterLink } from '../components/layout/Footer.astro';
+
+export interface HeaderConfig {
+  logoSrc?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  navItems?: NavItem[];
+  showKarriereLink?: boolean;
+  karriereLabel?: string;
+  karriereHref?: string;
+}
+
+export interface FooterConfig {
+  siteName: string;
+  tagline?: string;
+  description?: string;
+  email?: string;
+  phone?: string;
+  logoSrc?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  owner?: string;
+  legalForm?: string;
+  city?: string;
+  leistungenHeading?: string;
+  leistungenLinks?: FooterLink[];
+  rechtlichesHeading?: string;
+  rechtlichesLinks?: FooterLink[];
+  showKarriereLink?: boolean;
+  karriereLabel?: string;
+  karriereHref?: string;
+}
 
 interface Props {
   title?: string;
@@ -11,14 +67,92 @@ interface Props {
   ogImage?: string;
   canonicalUrl?: string;
   robots?: string;
+  /** Site name (passed to Header + BaseLayout). */
+  siteName: string;
+  /** Canonical site URL. */
+  siteUrl: string;
+  /** Default title (used when `title` not set). */
+  defaultTitle: string;
+  /** Default description. */
+  defaultDescription: string;
+  /** Title template. */
+  titleTemplate?: string;
+  /** Default OG image. */
+  defaultOgImage: string;
+  /** Plausible script src. */
+  plausibleScript?: string;
+  /** Schema.org props. */
+  schema?: SchemaProps;
+  /** Header config. */
+  header?: HeaderConfig;
+  /** Footer config. Required because Footer requires `siteName`. */
+  footer: FooterConfig;
 }
 
-const { title, description, ogImage, canonicalUrl, robots } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonicalUrl,
+  robots,
+  siteName,
+  siteUrl,
+  defaultTitle,
+  defaultDescription,
+  titleTemplate,
+  defaultOgImage,
+  plausibleScript,
+  schema,
+  header = {},
+  footer,
+} = Astro.props;
 ---
-<BaseLayout title={title} description={description} ogImage={ogImage} canonicalUrl={canonicalUrl} robots={robots}>
-  <Header />
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalUrl={canonicalUrl}
+  robots={robots}
+  siteName={siteName}
+  siteUrl={siteUrl}
+  defaultTitle={defaultTitle}
+  defaultDescription={defaultDescription}
+  titleTemplate={titleTemplate}
+  defaultOgImage={defaultOgImage}
+  plausibleScript={plausibleScript}
+  schema={schema}
+>
+  <Header
+    siteName={siteName}
+    logoSrc={header.logoSrc}
+    logoWidth={header.logoWidth}
+    logoHeight={header.logoHeight}
+    navItems={header.navItems}
+    showKarriereLink={header.showKarriereLink}
+    karriereLabel={header.karriereLabel}
+    karriereHref={header.karriereHref}
+  />
   <main>
     <slot />
   </main>
-  <Footer />
+  <Footer
+    siteName={footer.siteName}
+    tagline={footer.tagline}
+    description={footer.description}
+    email={footer.email}
+    phone={footer.phone}
+    logoSrc={footer.logoSrc}
+    logoWidth={footer.logoWidth}
+    logoHeight={footer.logoHeight}
+    owner={footer.owner}
+    legalForm={footer.legalForm}
+    city={footer.city}
+    leistungenHeading={footer.leistungenHeading}
+    leistungenLinks={footer.leistungenLinks}
+    rechtlichesHeading={footer.rechtlichesHeading}
+    rechtlichesLinks={footer.rechtlichesLinks}
+    showKarriereLink={footer.showKarriereLink}
+    karriereLabel={footer.karriereLabel}
+    karriereHref={footer.karriereHref}
+  />
 </BaseLayout>
