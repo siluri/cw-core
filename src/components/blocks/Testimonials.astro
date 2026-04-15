@@ -1,0 +1,71 @@
+---
+// @cw/core – Testimonials.astro
+// Inhalte kommen aus siteData.testimonials (nicht mehr hardcoded)
+// Schema.org Review Markup für Auffindbarkeit
+import { siteData } from '@/data/site-data';
+const testimonials = siteData.testimonials ?? [];
+---
+{testimonials.length > 0 && (
+<section class="testimonials-section" itemscope itemtype="https://schema.org/Product">
+  <meta itemprop="name" content={`${siteData.name} Website-Service`} />
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-heading">Das sagen unsere Kunden</h2>
+      <p class="section-subheading">Bewertungen von Unternehmen aus der Region.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      {testimonials.map((t) => (
+        <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+          <div class="stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+            <meta itemprop="ratingValue" content={String(t.stars)} />
+            <meta itemprop="bestRating" content="5" />
+            {'★'.repeat(t.stars)}
+          </div>
+          <blockquote itemprop="reviewBody">{t.text}</blockquote>
+          <div class="author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <strong itemprop="name">{t.name}</strong>
+            <span>{t.role}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+)}
+
+<style>
+  .testimonials-section { padding: 5rem 0; background: var(--color-surface); }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 64rem;
+    margin-inline: auto;
+  }
+  .testimonial-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    border: 1px solid #e5e7eb;
+  }
+  .stars {
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+  }
+  blockquote {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-primary);
+    margin: 0 0 1.25rem;
+    font-style: normal;
+  }
+  .author strong { display: block; font-size: 0.9375rem; }
+  .author span { font-size: 0.8125rem; color: var(--color-muted); }
+  @media (max-width: 768px) {
+    .testimonials-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
+</style>
