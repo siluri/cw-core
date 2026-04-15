@@ -73,22 +73,79 @@ import { LandingPage } from '@cw/core/layouts/LandingPage.astro';
 
 ## Block-Komponenten
 
-Alle Blocks lesen direkt aus `siteData` — keine Props erforderlich.
+Alle Blocks sind **prop-driven** — die Seite liest `siteData` und reicht die passenden Felder als Props durch. So bleibt `@cw/core` frei von Import-Abhängigkeiten auf Kunden-Datenmodule.
 
-| Komponente | Datenquelle |
-|-----------|------------|
-| `Hero` | `siteData.hero` — Split-Layout (mit Bild) oder Gradient |
-| `USPSection` | `siteData.usps` |
-| `LeistungenSection` | `siteData.leistungen` |
-| `ProcessSteps` | `siteData.processSteps` |
-| `PaketeSection` | `siteData.packages` |
-| `Testimonials` | `siteData.testimonials` |
-| `FAQ` | `siteData.faqs` |
-| `CTABlock` | `siteData.cta` |
-| `KarriereHero` | `siteData.karriere` |
-| `ArbeitgeberVorteile` | `siteData.karriere.vorteile` |
-| `StellenListe` | `siteData.karriere.stellen` |
-| `BewerbungsForm` | `siteData.karriere` |
+| Komponente | Typische Props (aus `siteData`) |
+|-----------|---------------------------------|
+| `Hero` | `headline`, `subtext`, `ctaPrimary`, `usps={siteData.usps}` |
+| `USPSection` | `items={siteData.usps}` |
+| `LeistungenSection` | `items={siteData.leistungen}` |
+| `ProcessSteps` | `steps={siteData.processSteps}` |
+| `PaketeSection` | `items={siteData.packages}` |
+| `Testimonials` | `items={siteData.testimonials}` |
+| `FAQ` | `items={siteData.faqs}` |
+| `CTABlock` | `headline`, `cta={siteData.cta}` |
+| `KarriereHero` | `karriere={siteData.karriere}` |
+| `ArbeitgeberVorteile` | `benefits={siteData.karriere.vorteile}` |
+| `StellenListe` | `stellen={siteData.karriere.stellen}` |
+| `BewerbungsForm` | `karriere={siteData.karriere}` |
+
+## Usage
+
+### Komponenten und Layouts importieren
+
+```astro
+---
+import BaseLayout   from '@cw/core/layouts/BaseLayout.astro';
+import LandingPage  from '@cw/core/layouts/LandingPage.astro';
+import Hero         from '@cw/core/components/blocks/Hero.astro';
+import USPSection   from '@cw/core/components/blocks/USPSection.astro';
+import Footer       from '@cw/core/components/layout/Footer.astro';
+import { siteData } from '@/data/site-data';
+---
+<LandingPage title={siteData.seo.title}>
+  <Hero
+    headline={siteData.hero.headline}
+    subtext={siteData.hero.subtext}
+    ctaPrimary={siteData.hero.ctaPrimary}
+    usps={siteData.usps}
+    siteName={siteData.name}
+  />
+  <USPSection items={siteData.usps} />
+</LandingPage>
+```
+
+### Typen importieren (IDE-Autocomplete)
+
+Alle öffentlichen Props-Typen werden vom Paket-Root re-exportiert:
+
+```ts
+import type {
+  HeroCTA, HeroUSP,
+  USPItem, LeistungItem, PaketeItem,
+  FAQItem, Testimonial, ProcessStep,
+  BenefitItem, StelleItem, StelleTyp,
+  FooterLink, NavItem,
+  SchemaProps,
+  SubmitOptions, SubmitResult,
+  SiteData,
+} from '@cw/core';
+
+const cta: HeroCTA = { label: 'Beratung anfragen', href: '/kontakt' };
+```
+
+### Form-Submission-Helper importieren
+
+```ts
+import { submitForm } from '@cw/core/utils/forms/submit';
+import type { SubmitResult } from '@cw/core';
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const result: SubmitResult = await submitForm(form, { actionUrl: '/api/contact' });
+  if (result.ok) showSuccess(); else showError(result.error);
+});
+```
 
 ## ContactForm
 
