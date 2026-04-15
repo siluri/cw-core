@@ -1,46 +1,134 @@
 ---
-// @cw/core – Footer.astro
-// Karriere-Link wird angezeigt wenn siteData.karriere?.enabled !== false
-import { siteData } from '@/data/site-data';
+/**
+ * @cw/core – Footer.astro
+ *
+ * Multi-column footer with brand info, service links, legal links, and a
+ * copyright line. All content is prop-driven; no imports from customer
+ * data modules.
+ *
+ * @example
+ *   <Footer
+ *     siteName={siteData.name}
+ *     description={siteData.description}
+ *     tagline={siteData.tagline}
+ *     email={siteData.contact.email}
+ *     phone={siteData.contact.phone}
+ *     owner={siteData.legal.owner}
+ *     legalForm={siteData.legal.form}
+ *     city={siteData.legal.city}
+ *     logoSrc="/logo.svg"
+ *     leistungenLinks={siteData.nav.footer.leistungen}
+ *     rechtlichesLinks={siteData.nav.footer.rechtliches}
+ *     showKarriereLink={siteData.karriere?.enabled !== false}
+ *   />
+ */
+
+export interface FooterLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  /** Site name (used as logo alt + text + default owner). */
+  siteName: string;
+  /** Short tagline shown bottom-right (italic). */
+  tagline?: string;
+  /** Business description shown under the logo. */
+  description?: string;
+  /** Contact email (rendered as mailto link). */
+  email?: string;
+  /** Optional phone number (rendered as tel link). */
+  phone?: string;
+  /** Logo image path. Defaults to `/logo.svg`. */
+  logoSrc?: string;
+  /** Logo width in px. */
+  logoWidth?: number;
+  /** Logo height in px. */
+  logoHeight?: number;
+  /** Legal owner for copyright line. Falls back to `siteName`. */
+  owner?: string;
+  /** Legal form, e.g. "Einzelunternehmen". */
+  legalForm?: string;
+  /** Legal city shown in copyright line. */
+  city?: string;
+  /** Heading for the "services" column. Defaults to "Leistungen". */
+  leistungenHeading?: string;
+  /** Links rendered in the "services" column. */
+  leistungenLinks?: FooterLink[];
+  /** Heading for the "legal" column. Defaults to "Rechtliches". */
+  rechtlichesHeading?: string;
+  /** Links rendered in the "legal" column. Defaults to Impressum + Datenschutz. */
+  rechtlichesLinks?: FooterLink[];
+  /** Show "/karriere" link in the services column. */
+  showKarriereLink?: boolean;
+  /** Karriere link label. Defaults to "Karriere". */
+  karriereLabel?: string;
+  /** Karriere link href. Defaults to "/karriere". */
+  karriereHref?: string;
+}
+
+const {
+  siteName,
+  tagline,
+  description,
+  email,
+  phone,
+  logoSrc = '/logo.svg',
+  logoWidth = 50,
+  logoHeight = 24,
+  owner,
+  legalForm = 'Einzelunternehmen',
+  city,
+  leistungenHeading = 'Leistungen',
+  leistungenLinks = [],
+  rechtlichesHeading = 'Rechtliches',
+  rechtlichesLinks = [
+    { label: 'Impressum', href: '/impressum' },
+    { label: 'Datenschutz', href: '/datenschutz' },
+  ],
+  showKarriereLink = false,
+  karriereLabel = 'Karriere',
+  karriereHref = '/karriere',
+} = Astro.props;
+
 const year = new Date().getFullYear();
-const karriereEnabled = siteData.karriere?.enabled !== false;
+const copyrightOwner = owner ?? siteName;
 ---
 <footer>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="/" class="logo">
-          <img src="/logo.svg" alt={siteData.name} width="50" height="24" loading="lazy" />
-          {siteData.name}
+          <img src={logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="lazy" />
+          {siteName}
         </a>
-        <p>{siteData.description}</p>
-        <a href={`mailto:${siteData.contact.email}`} class="contact-link">
-          {siteData.contact.email}
-        </a>
-        {siteData.contact.phone && (
-          <a href={`tel:${siteData.contact.phone}`} class="contact-link">
-            {siteData.contact.phone}
+        {description && <p>{description}</p>}
+        {email && (
+          <a href={`mailto:${email}`} class="contact-link">
+            {email}
+          </a>
+        )}
+        {phone && (
+          <a href={`tel:${phone}`} class="contact-link">
+            {phone}
           </a>
         )}
       </div>
 
       <div class="footer-links">
-        <h3>Leistungen</h3>
+        <h3>{leistungenHeading}</h3>
         <ul>
-          {(siteData.nav?.footer?.leistungen ?? []).map((item) => (
+          {leistungenLinks.map((item) => (
             <li><a href={item.href}>{item.label}</a></li>
           ))}
-          {karriereEnabled && <li><a href="/karriere">Karriere</a></li>}
+          {showKarriereLink && <li><a href={karriereHref}>{karriereLabel}</a></li>}
         </ul>
       </div>
 
       <div class="footer-links">
-        <h3>Rechtliches</h3>
+        <h3>{rechtlichesHeading}</h3>
         <ul>
-          {(siteData.nav?.footer?.rechtliches ?? [
-            { label: 'Impressum', href: '/impressum' },
-            { label: 'Datenschutz', href: '/datenschutz' },
-          ]).map((item) => (
+          {rechtlichesLinks.map((item) => (
             <li><a href={item.href}>{item.label}</a></li>
           ))}
         </ul>
@@ -48,8 +136,8 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
     </div>
 
     <div class="footer-bottom">
-      <p>© {year} {siteData.legal.owner} · {siteData.legal.form ?? 'Einzelunternehmen'} · {siteData.legal.city}</p>
-      <p class="footer-tagline">{siteData.tagline}</p>
+      <p>© {year} {copyrightOwner}{legalForm ? ` · ${legalForm}` : ''}{city ? ` · ${city}` : ''}</p>
+      {tagline && <p class="footer-tagline">{tagline}</p>}
     </div>
   </div>
 </footer>

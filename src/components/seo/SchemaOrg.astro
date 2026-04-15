@@ -1,49 +1,129 @@
 ---
-// @cw/core – SchemaOrg.astro
-// LocalBusiness + WebSite JSON-LD from siteData
+/**
+ * @cw/core – SchemaOrg.astro
+ *
+ * Emits two JSON-LD scripts into the `<head>`:
+ *   1. LocalBusiness + ProfessionalService
+ *   2. WebSite
+ *
+ * Prop-driven: no imports from customer data modules. Pass business data
+ * from your site-data module (or wherever it lives).
+ *
+ * @example
+ *   <SchemaOrg
+ *     name={siteData.name}
+ *     description={siteData.description}
+ *     url={siteData.url}
+ *     ogImage={siteData.seo.ogImage}
+ *     street={siteData.legal.street}
+ *     zip={siteData.legal.zip}
+ *     city={siteData.legal.city}
+ *     country={siteData.legal.country}
+ *     email={siteData.contact.email}
+ *     phone={siteData.contact.phone}
+ *   />
+ */
 import type { WithContext, LocalBusiness, WebSite } from 'schema-dts';
-import { siteData } from '@/data/site-data';
 
 interface Props {
+  /** Business name. */
+  name: string;
+  /** Business description. */
+  description: string;
+  /** Canonical site URL (no trailing slash). */
+  url: string;
+  /** Path or absolute URL to OG image (resolved against `url`). */
+  ogImage: string;
+  /** Path or absolute URL to logo. Defaults to `${url}/logo.png`. */
+  logoUrl?: string;
+  /** Street address. */
+  street?: string;
+  /** Postal code. */
+  zip?: string;
+  /** City. */
+  city?: string;
+  /** ISO country code (e.g. "DE"). */
+  country?: string;
+  /** Contact email. */
+  email?: string;
+  /** Optional phone number. Omitted from JSON-LD if empty. */
+  phone?: string;
+  /** Area served (ISO country code). Defaults to "DE". */
+  areaServed?: string;
+  /** Schema.org `priceRange` hint. Defaults to "€€". */
   priceRange?: string;
+  /** List of profile URLs (sameAs). */
   sameAs?: string[];
+  /** Available languages for the contact point. Defaults to `['German']`. */
+  availableLanguage?: string[];
 }
-const { priceRange = '€€', sameAs = [] } = Astro.props;
 
-const localBusinessSchema: WithContext<LocalBusiness> = {
+const {
+  name,
+  description,
+  url,
+  ogImage,
+  logoUrl,
+  street,
+  zip,
+  city,
+  country,
+  email,
+  phone,
+  areaServed = 'DE',
+  priceRange = '€€',
+  sameAs = [],
+  availableLanguage = ['German'],
+} = Astro.props;
+
+const resolvedLogo = logoUrl ?? `${url}/logo.png`;
+const resolvedImage = new URL(ogImage, url).toString();
+
+// schema-dts enforces a single `@type` literal per object; we emit an array
+// (`["LocalBusiness", "ProfessionalService"]`) because JSON-LD allows multiple
+// types per node. Cast the composite object rather than fight the type system.
+const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'ProfessionalService'],
-  name: siteData.name,
-  description: siteData.description,
-  url: siteData.url,
-  logo: `${siteData.url}/logo.png`,
-  image: new URL(siteData.seo.ogImage, siteData.url).toString(),
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: siteData.legal.street,
-    postalCode: siteData.legal.zip,
-    addressLocality: siteData.legal.city,
-    addressCountry: siteData.legal.country,
-  },
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    email: siteData.contact.email,
-    ...(siteData.contact.phone ? { telephone: siteData.contact.phone } : {}),
-    availableLanguage: ['German'],
-  },
-  areaServed: 'DE',
+  name,
+  description,
+  url,
+  logo: resolvedLogo,
+  image: resolvedImage,
+  ...(street || zip || city || country
+    ? {
+        address: {
+          '@type': 'PostalAddress',
+          ...(street ? { streetAddress: street } : {}),
+          ...(zip ? { postalCode: zip } : {}),
+          ...(city ? { addressLocality: city } : {}),
+          ...(country ? { addressCountry: country } : {}),
+        },
+      }
+    : {}),
+  ...(email
+    ? {
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer service',
+          email,
+          ...(phone ? { telephone: phone } : {}),
+          availableLanguage,
+        },
+      }
+    : {}),
+  areaServed,
   priceRange,
   sameAs,
-};
+} as unknown as WithContext<LocalBusiness>;
 
 const webSiteSchema: WithContext<WebSite> = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: siteData.name,
-  description: siteData.description,
-  url: siteData.url,
+  name,
+  description,
+  url,
 };
 ---
-<script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
-<script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />

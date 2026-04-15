@@ -1,23 +1,53 @@
 ---
-// @cw/core – ContactForm.astro
-// Natives HTML-Form — kein iframe, DSGVO-konform
-// Primär: AJAX + Inline-Erfolgsmeldung | Fallback (kein JS): native POST
-// actionUrl: wenn gesetzt, direkt POST an eigenen Endpoint statt Web3Forms
-import { siteData } from '@/data/site-data';
-
+/**
+ * @cw/core – ContactForm.astro
+ *
+ * Native HTML contact form (no iframe, GDPR-friendly).
+ *   • Default backend: Web3Forms (https://web3forms.com) — pass `formKey`.
+ *   • Custom endpoint: pass `actionUrl` to POST JSON to your own route
+ *     (e.g. a Vercel Function bridging to Tally.so, Formspree, Resend,
+ *     or a CRM). When `actionUrl` is set, Web3Forms fields are skipped.
+ *
+ * Primary submission path: AJAX fetch + inline success message.
+ * Fallback (no JS): native HTML form POST.
+ *
+ * Fully prop-driven — no imports from customer data modules.
+ *
+ * @example Web3Forms
+ *   <ContactForm
+ *     formKey={siteData.contact.web3formsKey}
+ *     subject={`Neue Anfrage – ${siteData.name}`}
+ *     siteName={siteData.name}
+ *     fallbackEmail={siteData.contact.email}
+ *   />
+ *
+ * @example Custom endpoint (e.g. Tally.so bridge)
+ *   <ContactForm
+ *     actionUrl="/api/contact"
+ *     fallbackEmail={siteData.contact.email}
+ *   />
+ */
 interface Props {
+  /** Web3Forms access key. Ignored if `actionUrl` is set. */
   formKey?: string;
+  /** Email subject line injected as hidden field (Web3Forms only). */
   subject?: string;
+  /** Site name used for default subject + `from_name` (Web3Forms only). */
+  siteName?: string;
+  /** Form variant — determines which fields are rendered. */
   formType?: 'contact' | 'audit' | 'bewerbung';
+  /** Email address shown in the no-JS / error fallback. */
   fallbackEmail?: string;
+  /** Custom submit endpoint. When set, Web3Forms is bypassed. */
   actionUrl?: string;
 }
 
 const {
   formKey = '',
-  subject = `Neue Anfrage – ${siteData.name}`,
+  siteName = '',
+  subject = siteName ? `Neue Anfrage – ${siteName}` : 'Neue Anfrage',
   formType = 'contact',
-  fallbackEmail = siteData.contact.email,
+  fallbackEmail = '',
   actionUrl,
 } = Astro.props;
 
@@ -39,7 +69,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         <>
           <input type="hidden" name="access_key" value={formKey} />
           <input type="hidden" name="subject" value={subject} />
-          <input type="hidden" name="from_name" value={siteData.name} />
+          <input type="hidden" name="from_name" value={siteName} />
           <!-- Honeypot Spam-Schutz -->
           <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
         </>
@@ -126,15 +156,16 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
 
     <div class="form-error" hidden>
       <p>
-        Etwas ist schiefgelaufen. Bitte schreiben Sie uns direkt an
-        <a href={`mailto:${fallbackEmail}`}>{fallbackEmail}</a>.
+        Etwas ist schiefgelaufen.{fallbackEmail && (
+          <> Bitte schreiben Sie uns direkt an <a href={`mailto:${fallbackEmail}`}>{fallbackEmail}</a>.</>
+        )}
       </p>
     </div>
   </div>
 ) : (
   <div class="form-email-fallback">
     <p>Kontaktieren Sie uns direkt per E-Mail:</p>
-    <a href={`mailto:${fallbackEmail}`} class="btn-accent">{fallbackEmail}</a>
+    {fallbackEmail && <a href={`mailto:${fallbackEmail}`} class="btn-accent">{fallbackEmail}</a>}
   </div>
 )}
 
