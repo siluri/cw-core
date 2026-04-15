@@ -1,22 +1,22 @@
 {
-  "name": "@cw/core",
-  "version": "1.0.0",
+  "name": "cw-core-monorepo",
+  "version": "0.1.0-alpha",
+  "private": true,
+  "description": "Monorepo for Blitzsicht customer website template system (@cw/core, @cw/manifest, cw CLI)",
   "type": "module",
-  "description": "Shared Astro components, layouts and styles for customer websites",
-  "exports": {
-    "./layouts/*": "./layouts/*",
-    "./components/*": "./components/*",
-    "./styles/*": "./styles/*",
-    "./templates/*": "./templates/*"
-  },
-  "peerDependencies": {
-    "astro": ">=5.0.0",
-    "tailwindcss": ">=4.0.0"
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "check": "pnpm -r --if-present check",
+    "test": "pnpm -r --if-present test",
+    "clean": "pnpm -r --if-present clean"
   },
   "devDependencies": {
-    "schema-dts": "^2.0.0"
+    "typescript": "^5.4.0"
   },
-  "keywords": ["astro", "components", "customer-websites"],
-  "license": "UNLICENSED",
-  "private": true
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "license": "UNLICENSED"
 }

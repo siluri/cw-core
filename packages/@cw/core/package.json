@@ -1,0 +1,39 @@
+{
+  "name": "@cw/core",
+  "version": "0.1.0-alpha",
+  "type": "module",
+  "description": "Shared Astro components, layouts and styles for Blitzsicht customer websites",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./layouts/*": "./src/layouts/*",
+    "./components/*": "./src/components/*",
+    "./styles/*": "./src/styles/*",
+    "./templates/*": "./src/templates/*",
+    "./utils/*": "./src/utils/*"
+  },
+  "scripts": {
+    "build": "echo '@cw/core is a source-only Astro component library — no build step (consumers compile via their own Astro pipeline).'",
+    "check": "astro check"
+  },
+  "peerDependencies": {
+    "astro": ">=5.0.0",
+    "tailwindcss": ">=4.0.0"
+  },
+  "devDependencies": {
+    "astro": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.4.0",
+    "schema-dts": "^2.0.0"
+  },
+  "keywords": ["astro", "components", "customer-websites", "blitzsicht"],
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siluri/cw-core.git",
+    "directory": "packages/@cw/core"
+  }
+}

@@ -1,0 +1,4 @@
+packages:
+  - "packages/@cw/*"
+  - "cli"
+  - "templates/*"

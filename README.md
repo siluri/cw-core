@@ -1,147 +1,63 @@
-# @cw/core
+# cw-core (monorepo)
 
-Gemeinsame Astro-Komponenten, Layouts und Styles für Blitzsicht-Kundenseiten.
+**Private monorepo for the Blitzsicht customer-website template system.**
 
-## Konzept
+Version: `0.1.0-alpha` (pre-release, breaking changes expected).
 
-`cw-core` ist eine rein datengetriebene Komponentenbibliothek. Jede Kundensite bringt nur drei Dinge mit:
-
-1. `src/data/site-data.ts` — alle Inhalte (Single Source of Truth)
-2. `src/styles/tokens.css` — Markenfarben als CSS Custom Properties
-3. `src/pages/*.astro` — Seitenassemblierung (meistens nur Block-Stacking)
-
-Alles andere (Header, Footer, SEO, Schema.org, Blocks, ContactForm, Layouts) kommt unverändert aus diesem Paket.
-
-## Voraussetzungen
-
-```
-astro >= 5.0.0
-tailwindcss >= 4.0.0
-```
-
-## Installation (in Kundensites)
+Consumed as a Git dependency (no npm publish):
 
 ```jsonc
-// package.json
 {
   "dependencies": {
-    "@cw/core": "github:siluri/cw-core#v1.0.5"
+    "@cw/core": "github:siluri/cw-core#v0.1.0-alpha"
   }
 }
 ```
 
-```
-pnpm install
-```
-
-## Struktur
+## Structure
 
 ```
 cw-core/
-  components/
-    blocks/          # Seitenabschnitte (Hero, USPs, Leistungen, Pakete …)
-    forms/           # ContactForm (Kontakt / Audit / Bewerbung)
-    layout/          # Header, Footer
-    seo/             # SchemaOrg JSON-LD
-  layouts/
-    BaseLayout.astro       # HTML-Shell: SEO, OG, Schema, Plausible, Favicons
-    LandingPage.astro      # BaseLayout + Header + <main> + Footer
-    ContentPage.astro      # BaseLayout + Header + Prose-Container + Footer
-  styles/
-    tokens-base.css        # Shared Utility-Klassen (.btn-accent, .container …)
-  templates/
-    site-data.template.ts  # Annotiertes Template für neue Kunden
-    tokens.template.css    # CSS-Token-Template mit WCAG-Hinweisen
-    vercel.template.json   # Security-Header-Basis für Vercel
+├── packages/
+│   └── @cw/
+│       ├── core/          — Astro components, layouts, blocks, SEO (this package)
+│       └── manifest/      — Zod schema for site-data.ts (Phase 2 Task 2.x)
+├── cli/                    — `cw init` command (Phase 2 Task 3.x)
+├── templates/
+│   └── customer-starter/   — Astro boilerplate for new customer sites
+├── package.json            — workspace root
+├── pnpm-workspace.yaml
+└── tsconfig.json           — shared base config
 ```
 
-## Layouts
+## Requirements
 
-| Layout | Verwendung |
-|--------|-----------|
-| `LandingPage` | Alle Marketing-Seiten (Homepage, Pakete, Kontakt …) |
-| `ContentPage` | Impressum, Datenschutz (styled prose container) |
+- Node 18+
+- pnpm 8+ (workspace support required)
+- Astro 5, Tailwind v4 (peer dependencies of `@cw/core`)
 
-```astro
----
-import { LandingPage } from '@cw/core/layouts/LandingPage.astro';
----
-<LandingPage title="Startseite">
-  <slot />
-</LandingPage>
-```
-
-## Block-Komponenten
-
-Alle Blocks lesen direkt aus `siteData` — keine Props erforderlich.
-
-| Komponente | Datenquelle |
-|-----------|------------|
-| `Hero` | `siteData.hero` — Split-Layout (mit Bild) oder Gradient |
-| `USPSection` | `siteData.usps` |
-| `LeistungenSection` | `siteData.leistungen` |
-| `ProcessSteps` | `siteData.processSteps` |
-| `PaketeSection` | `siteData.packages` |
-| `Testimonials` | `siteData.testimonials` |
-| `FAQ` | `siteData.faqs` |
-| `CTABlock` | `siteData.cta` |
-| `KarriereHero` | `siteData.karriere` |
-| `ArbeitgeberVorteile` | `siteData.karriere.vorteile` |
-| `StellenListe` | `siteData.karriere.stellen` |
-| `BewerbungsForm` | `siteData.karriere` |
-
-## ContactForm
-
-Drei Varianten über `formType`:
-
-```astro
-<!-- Kontaktformular -->
-<ContactForm formType="contact" />
-
-<!-- Audit-Formular (URL + E-Mail) mit JSON-POST an eigenes Backend -->
-<ContactForm formType="audit" actionUrl="/api/audit-hook" />
-
-<!-- Bewerbungsformular -->
-<ContactForm formType="bewerbung" />
-```
-
-Submission-Varianten:
-- **Web3Forms** (Default): kein Backend nötig, Schlüssel in `siteData.contact.web3formsKey`
-- **Custom actionUrl**: sendet JSON via Fetch, ideal für eigene Vercel Functions
-
-Features: Loading-Spinner, Honeypot-Spamschutz, Inline-Erfolg/Fehler-Zustand, No-JS-Fallback (mailto).
-
-## Neue Kundensite aufsetzen
-
-1. Neues Repo von der Blitzsicht-Template klonen
-2. `templates/site-data.template.ts` → `src/data/site-data.ts` kopieren und alle `// TODO`-Felder ausfüllen
-3. `templates/tokens.template.css` → `src/styles/tokens.css` kopieren und Markenfarben eintragen
-4. `pnpm install` → `pnpm dev`
-
-## SEO & Schema.org
-
-`BaseLayout` generiert automatisch:
-- `<title>`, Meta-Description, Canonical
-- Open Graph + Twitter Card
-- `LocalBusiness + ProfessionalService` JSON-LD (Adresse, Kontakt, sameAs)
-- `WebSite` JSON-LD
-- Plausible-Analytics-Script (nur wenn `siteData.analytics.plausibleScript` gesetzt)
-
-## Styling-Konventionen
-
-- Tailwind v4 via `@tailwindcss/vite` Plugin (kein `tailwind.config.js`)
-- Brand-Farben als CSS Custom Properties in der Kunden-`tokens.css` (z. B. `--color-primary`, `--color-accent`)
-- `tokens-base.css` stellt Utility-Klassen bereit, setzt aber kein `@import "tailwindcss"` — das macht die Kunden-`tokens.css`
-- Keine Google Fonts (DSGVO) — ausschließlich System-UI Stack
-
-## Versions-Tagging
+## Commands
 
 ```bash
-git tag v1.0.6
-git push origin v1.0.6
+pnpm install                       # install all workspaces
+pnpm build                         # build every package that defines a build script
+pnpm --filter @cw/core check       # type-check @cw/core only
+pnpm --filter @cw/core build       # build @cw/core only
 ```
 
-Kundensites referenzieren das Paket via GitHub-Tag:
-```json
-"@cw/core": "github:siluri/cw-core#v1.0.6"
-```
+## Versioning
+
+Phase 2 uses Git tags for version pinning. See
+[PHASE2-SCOPE.md](../customer-websites/PHASE2-SCOPE.md) for the patch-upgrade
+workflow.
+
+- `v1.0.x` tags: legacy flat-layout package (still consumed by
+  `customer-blitzsicht` until Phase 2 migration completes).
+- `v0.1.0-alpha+` tags: new monorepo layout (this branch).
+
+## Status
+
+- Phase 2 Task 1.1 — repo exists (private, `siluri/cw-core`) ✓
+- Phase 2 Task 1.2 — monorepo skeleton (pnpm workspaces) ✓
+- Phase 2 Task 1.3 — `@cw/core` package skeleton ✓
+- Phase 2 Task 1.4 — extract Hero, Features, CTA, Footer — **next**
