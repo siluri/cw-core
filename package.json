@@ -8,7 +8,8 @@
     "build": "pnpm -r --if-present build",
     "check": "pnpm -r --if-present check",
     "test": "pnpm -r --if-present test",
-    "clean": "pnpm -r --if-present clean"
+    "clean": "pnpm -r --if-present clean",
+    "release:cw-core": "git subtree split --prefix=packages/@cw/core -b release/cw-core && echo 'Now: git push origin release/cw-core && git tag release/cw-core/v<version> release/cw-core && git push --tags'"
   },
   "devDependencies": {
     "typescript": "^5.4.0"

@@ -12,14 +12,16 @@
   },
   "scripts": {
     "build": "echo '@cw/manifest is source-only — consumers compile via their own TS/Astro pipeline.'",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "zod": "^3.23.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^2.1.0"
   },
   "keywords": ["manifest", "schema", "zod", "customer-websites", "blitzsicht"],
   "license": "UNLICENSED",

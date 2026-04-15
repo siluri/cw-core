@@ -17,6 +17,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc --noEmit",
     "clean": "rm -rf dist",
+    "test": "vitest run",
     "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
@@ -29,7 +30,8 @@
     "@cw/manifest": "workspace:*",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.0.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^2.1.0"
   },
   "engines": {
     "node": ">=20.0.0"
