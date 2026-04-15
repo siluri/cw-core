@@ -1,11 +1,32 @@
 ---
-// @cw/core – CTABlock.astro
+/**
+ * @cw/core – CTABlock.astro
+ *
+ * Full-width call-to-action section with primary + secondary button.
+ * Fully prop-driven; no imports from customer data modules.
+ *
+ * @example
+ *   <CTABlock
+ *     headline="Bereit für Ihre neue Website?"
+ *     sub="Kostenloses Erstgespräch — 30 Minuten, unverbindlich."
+ *     primaryLabel="Beratung anfragen"
+ *     primaryHref="/kontakt"
+ *     secondaryLabel="Pakete & Preise"
+ *     secondaryHref="/pakete"
+ *   />
+ */
 interface Props {
+  /** Main heading of the CTA block. */
   headline?: string;
+  /** Supporting copy under the heading. */
   sub?: string;
+  /** Primary button label. */
   primaryLabel?: string;
+  /** Primary button href. */
   primaryHref?: string;
+  /** Secondary (outline) button label. Hidden if empty. */
   secondaryLabel?: string;
+  /** Secondary button href. */
   secondaryHref?: string;
 }
 const {
@@ -29,7 +50,7 @@ const {
       <p>{sub}</p>
       <div class="cta-buttons">
         <a href={primaryHref} class="btn-accent">{primaryLabel}</a>
-        <a href={secondaryHref} class="btn-outline">{secondaryLabel}</a>
+        {secondaryLabel && <a href={secondaryHref} class="btn-outline">{secondaryLabel}</a>}
       </div>
     </div>
   </div>

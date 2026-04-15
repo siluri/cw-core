@@ -1,13 +1,73 @@
 ---
-// @cw/core – Hero.astro
-// Zwei Varianten:
-//   • hero.image gesetzt → Split-Layout (Text 55%, Bild 45%)
-//   • kein hero.image → Gradient-Only (Text zentriert/links)
+/**
+ * @cw/core – Hero.astro
+ *
+ * Reusable hero section with two layout variants:
+ *   • `image` prop set  → Split-Layout (Text 55%, Image 45%)
+ *   • `image` not set   → Gradient-Only (Text left-aligned, full-width)
+ *
+ * Prop-driven: no imports from customer data modules. The consuming page
+ * (or a higher-level page component) is responsible for passing site data
+ * from `@/data/site-data` (or equivalent) via props.
+ *
+ * @example
+ *   <Hero
+ *     badge="Fertig in 7 Tagen"
+ *     headline="Professionelle Website.<br/>Ohne Warteliste."
+ *     subtext="…"
+ *     ctaPrimary={{ label: 'Beratung anfragen', href: '/kontakt' }}
+ *     ctaSecondary={{ label: 'Audit', href: '/website-audit' }}
+ *     usps={siteData.usps}
+ *     siteName={siteData.name}
+ *   />
+ */
 import { Image } from 'astro:assets';
-import { siteData } from '@/data/site-data';
+import type { ImageMetadata } from 'astro';
 
-const hero = siteData.hero;
-const hasImage = !!hero.image;
+export interface HeroCTA {
+  label: string;
+  href: string;
+}
+
+export interface HeroUSP {
+  icon: string;
+  title: string;
+}
+
+interface Props {
+  /** Small badge above the headline. Defaults to "Fertig in 7 Tagen – garantiert". */
+  badge?: string;
+  /** Main headline. Supports HTML (e.g. `<br/>`) via set:html. */
+  headline: string;
+  /** Sub-copy under the headline. */
+  subtext?: string;
+  /** Optional hero image. If set, triggers split layout. Accepts Astro ImageMetadata or URL string. */
+  image?: ImageMetadata | string;
+  /** Alt text for the hero image. Falls back to `siteName`. */
+  imageAlt?: string;
+  /** Site name used as image alt fallback. */
+  siteName?: string;
+  /** Primary CTA (accent button). */
+  ctaPrimary?: HeroCTA;
+  /** Optional secondary CTA (outline button). */
+  ctaSecondary?: HeroCTA;
+  /** Optional USP chips shown below the CTAs. */
+  usps?: HeroUSP[];
+}
+
+const {
+  badge = 'Fertig in 7 Tagen – garantiert',
+  headline,
+  subtext,
+  image,
+  imageAlt,
+  siteName,
+  ctaPrimary = { label: 'Kostenlose Beratung anfragen', href: '/kontakt' },
+  ctaSecondary,
+  usps = [],
+} = Astro.props;
+
+const hasImage = !!image;
 ---
 <section class:list={['hero', hasImage && 'hero--split']}>
   <div class="container">
@@ -16,31 +76,31 @@ const hasImage = !!hero.image;
         <svg width="14" height="14" viewBox="0 0 512 512" aria-hidden="true">
           <polygon points="296,80 176,288 248,288 216,432 336,224 264,224" fill="currentColor"/>
         </svg>
-        {hero.badge ?? 'Fertig in 7 Tagen – garantiert'}
+        {badge}
       </div>
 
-      <h1 set:html={hero.headline} />
+      <h1 set:html={headline} />
 
-      <p class="hero-sub">{hero.subtext}</p>
+      {subtext && <p class="hero-sub">{subtext}</p>}
 
       <div class="hero-cta">
-        <a href={hero.ctaPrimary?.href ?? '/kontakt'} class="btn-accent">
+        <a href={ctaPrimary.href} class="btn-accent">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
             <polyline points="22,6 12,13 2,6"/>
           </svg>
-          {hero.ctaPrimary?.label ?? 'Kostenlose Beratung anfragen'}
+          {ctaPrimary.label}
         </a>
-        {hero.ctaSecondary && (
-          <a href={hero.ctaSecondary.href} class="btn-outline">
-            {hero.ctaSecondary.label}
+        {ctaSecondary && (
+          <a href={ctaSecondary.href} class="btn-outline">
+            {ctaSecondary.label}
           </a>
         )}
       </div>
 
-      {siteData.usps?.length > 0 && (
+      {usps.length > 0 && (
         <div class="hero-usps">
-          {siteData.usps.map((usp) => (
+          {usps.map((usp) => (
             <div class="hero-usp-item">
               <span class="usp-icon" aria-hidden="true">{usp.icon}</span>
               <span>{usp.title}</span>
@@ -50,15 +110,27 @@ const hasImage = !!hero.image;
       )}
     </div>
 
-    {hasImage && (
+    {hasImage && typeof image !== 'string' && (
       <div class="hero-image-wrap">
         <Image
-          src={hero.image!}
-          alt={hero.imageAlt ?? siteData.name}
+          src={image!}
+          alt={imageAlt ?? siteName ?? ''}
           width={600}
           height={450}
           loading="eager"
           format="webp"
+          class="hero-img"
+        />
+      </div>
+    )}
+    {hasImage && typeof image === 'string' && (
+      <div class="hero-image-wrap">
+        <img
+          src={image}
+          alt={imageAlt ?? siteName ?? ''}
+          width={600}
+          height={450}
+          loading="eager"
           class="hero-img"
         />
       </div>
