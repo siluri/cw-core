@@ -1,0 +1,58 @@
+---
+import ContentPage from '@cw/core/layouts/ContentPage.astro';
+import { siteData } from '@/data/site-data';
+import { landingBaseProps } from '@/data/page-config';
+import '@/styles/global.css';
+const l = siteData.legal;
+---
+<ContentPage {...landingBaseProps} title="Datenschutzerklärung">
+  <div class="legal-content">
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      {l.owner}<br />
+      {l.street}<br />
+      {l.zip} {l.city}<br />
+      E-Mail: <a href={`mailto:${l.email}`}>{l.email}</a>
+    </p>
+
+    <h2>2. Erhebung personenbezogener Daten</h2>
+    <p>
+      Diese Website erhebt personenbezogene Daten nur im technisch notwendigen
+      Rahmen. Beim Aufruf der Website werden automatisch Informationen wie
+      IP-Adresse und Browser vom Hosting-Provider verarbeitet (Art. 6 Abs. 1
+      lit. f DSGVO, berechtigtes Interesse am stabilen Betrieb).
+    </p>
+
+    <h2>3. Analyse (cookie-frei)</h2>
+    <p>
+      Wir nutzen <strong>Plausible Analytics</strong> – cookie-frei,
+      DSGVO-konform, ohne IP-Speicherung. Es werden keine personenbezogenen
+      Daten an Dritte weitergegeben.
+    </p>
+
+    <h2>4. Kontaktformular</h2>
+    <p>
+      Bei einer Anfrage über das Kontaktformular werden die angegebenen Daten
+      (Name, E-Mail, Nachricht) zur Bearbeitung gespeichert. Rechtsgrundlage:
+      Art. 6 Abs. 1 lit. b DSGVO.
+    </p>
+
+    <h2>5. Ihre Rechte</h2>
+    <p>
+      Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung
+      der Verarbeitung sowie Widerspruch und Datenübertragbarkeit. Wenden Sie
+      sich dazu an <a href={`mailto:${l.email}`}>{l.email}</a>.
+    </p>
+  </div>
+</ContentPage>
+
+<style>
+  .legal-content {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+  .legal-content h2 {
+    margin-top: 2rem;
+  }
+</style>

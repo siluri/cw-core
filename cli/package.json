@@ -1,0 +1,44 @@
+{
+  "name": "@cw/cli",
+  "version": "0.1.0-alpha",
+  "type": "module",
+  "description": "Blitzsicht customer-website CLI. Scaffolds a new customer repo from the customer-starter template.",
+  "bin": {
+    "cw": "./bin/cw.mjs"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run clean && pnpm run build"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "picocolors": "^1.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@cw/manifest": "workspace:*",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siluri/cw-core.git",
+    "directory": "cli"
+  }
+}

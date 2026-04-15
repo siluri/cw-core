@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "@cw/core/styles/tokens-base.css";
+
+@theme {
+  /* Brand colors — override per customer. Defaults mirror Blitzsicht. */
+  --color-primary: #1D1E3B;
+  --color-primary-light: #16213e;
+  --color-accent: #EF7612;
+  --color-accent-hover: #d46710;
+  --color-accent-text: #B85A0D;
+  --color-surface: #f8f9fa;
+  --color-muted: #6b7280;
+
+  /* System-UI font stack — NO Google Fonts (GDPR). */
+  --font-sans: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root {
+  --section-padding: 5rem;
+  --container-max: 72rem;
+}

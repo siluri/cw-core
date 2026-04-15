@@ -1,0 +1,53 @@
+---
+import ContentPage from '@cw/core/layouts/ContentPage.astro';
+import { siteData } from '@/data/site-data';
+import { landingBaseProps } from '@/data/page-config';
+import '@/styles/global.css';
+const l = siteData.legal;
+---
+<ContentPage {...landingBaseProps} title="Impressum">
+  <div class="legal-content">
+    <h2>Angaben gemäß § 5 TMG</h2>
+    <p>
+      {l.owner}<br />
+      {l.form}<br />
+      {l.street}<br />
+      {l.zip} {l.city}
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>E-Mail: <a href={`mailto:${l.email}`}>{l.email}</a></p>
+
+    {l.ustIdNr && (
+      <>
+        <h2>Umsatzsteuer-Identifikationsnummer</h2>
+        <p>USt-IdNr. gemäß § 27 a Umsatzsteuergesetz: {l.ustIdNr}</p>
+      </>
+    )}
+
+    <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+    <p>
+      {l.owner}<br />
+      {l.street}<br />
+      {l.zip} {l.city}
+    </p>
+
+    <h2>Haftungsausschluss</h2>
+    <p>
+      Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die
+      Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch
+      keine Gewähr übernehmen.
+    </p>
+  </div>
+</ContentPage>
+
+<style>
+  .legal-content {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+  .legal-content h2 {
+    margin-top: 2rem;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import LandingPage from '@cw/core/layouts/LandingPage.astro';
+import ContactForm from '@cw/core/components/forms/ContactForm.astro';
+import { siteData } from '@/data/site-data';
+import { landingBaseProps } from '@/data/page-config';
+import '@/styles/global.css';
+---
+<LandingPage
+  {...landingBaseProps}
+  title="Kontakt"
+  description="Kontaktformular – wir melden uns innerhalb von 24 Stunden."
+>
+  <section class="page-hero">
+    <div class="container">
+      <h1>Kontakt aufnehmen</h1>
+      <p>Schreiben Sie uns – wir melden uns innerhalb von 24&nbsp;Stunden.</p>
+    </div>
+  </section>
+
+  <section class="kontakt-section">
+    <div class="container">
+      <ContactForm
+        formKey={siteData.contact.web3formsKey}
+        subject={`Anfrage – ${siteData.name}`}
+        formType="contact"
+      />
+
+      <p class="kontakt-direct">
+        Oder direkt per E-Mail:
+        <a href={`mailto:${siteData.contact.email}`}>{siteData.contact.email}</a>
+      </p>
+    </div>
+  </section>
+</LandingPage>
+
+<style>
+  .page-hero {
+    padding: 4rem 0 2rem;
+    text-align: center;
+  }
+  .kontakt-section {
+    padding: 2rem 0 5rem;
+  }
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .kontakt-direct {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--color-muted);
+  }
+</style>

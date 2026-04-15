@@ -1,0 +1,34 @@
+---
+import LandingPage from '@cw/core/layouts/LandingPage.astro';
+import Hero from '@cw/core/components/blocks/Hero.astro';
+import USPSection from '@cw/core/components/blocks/USPSection.astro';
+import ProcessSteps from '@cw/core/components/blocks/ProcessSteps.astro';
+import PaketeSection from '@cw/core/components/blocks/PaketeSection.astro';
+import Testimonials from '@cw/core/components/blocks/Testimonials.astro';
+import FAQ from '@cw/core/components/blocks/FAQ.astro';
+import CTABlock from '@cw/core/components/blocks/CTABlock.astro';
+import LeistungenSection from '@cw/core/components/blocks/LeistungenSection.astro';
+import { siteData } from '@/data/site-data';
+import { landingBaseProps } from '@/data/page-config';
+import '@/styles/global.css';
+---
+<LandingPage {...landingBaseProps}>
+  <Hero
+    badge={siteData.hero.badge}
+    headline={siteData.hero.headline}
+    subtext={siteData.hero.subtext}
+    image={siteData.hero.image}
+    imageAlt={siteData.hero.imageAlt}
+    siteName={siteData.name}
+    ctaPrimary={siteData.hero.ctaPrimary}
+    ctaSecondary={siteData.hero.ctaSecondary}
+    usps={siteData.usps}
+  />
+  <LeistungenSection items={siteData.leistungen} subheading={siteData.tagline} />
+  <USPSection items={siteData.usps} />
+  <ProcessSteps items={siteData.processSteps} />
+  <PaketeSection items={siteData.packages} />
+  <Testimonials items={siteData.testimonials} siteName={siteData.name} />
+  <FAQ items={siteData.faqs} />
+  <CTABlock />
+</LandingPage>
