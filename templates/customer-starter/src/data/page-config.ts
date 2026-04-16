@@ -18,12 +18,16 @@ export const footerConfig = {
   leistungenLinks: siteData.nav.footer.leistungen,
   rechtlichesLinks: siteData.nav.footer.rechtliches,
   showKarriereLink: false,
+  logoSrc: '/logo.svg',
+  logoSrcDark: '/logo-dark.svg',
 } as const;
 
 /** Header config, mirrors @cw/core/layouts/LandingPage#HeaderConfig. */
 export const headerConfig = {
   navItems: siteData.nav.main,
   showKarriereLink: false,
+  logoSrc: '/logo.svg',
+  logoSrcDark: '/logo-dark.svg',
 } as const;
 
 /** Schema.org props forwarded into <BaseLayout schema={...}/>. */
@@ -49,6 +53,8 @@ export const landingBaseProps = {
   defaultOgImage: siteData.seo.ogImage,
   titleTemplate: siteData.seo.titleTemplate,
   plausibleScript: siteData.analytics?.plausibleScript,
+  logoSrc: '/logo.svg',
+  logoSrcDark: '/logo-dark.svg',
   header: headerConfig,
   footer: footerConfig,
   schema: schemaConfig,
