@@ -73,14 +73,22 @@ const {
           <h3 class="paket-name">{pkg.name}</h3>
 
           <div class="paket-pricing">
-            <span class="price-amount">{pkg.priceSetup.toLocaleString('de-DE')}&thinsp;€</span>
-            <span class="price-label">einmalig</span>
+            {pkg.priceSetup > 0 ? (
+              <>
+                <span class="price-amount">{pkg.priceSetup.toLocaleString('de-DE')}&thinsp;€</span>
+                <span class="price-label">einmalig</span>
+              </>
+            ) : (
+              <span class="price-amount price-anfrage">Auf Anfrage</span>
+            )}
           </div>
-          <div class="paket-pricing-monthly">
-            <span>danach</span>
-            <strong>{pkg.priceMonthly}&thinsp;€</strong>
-            <span>/ Monat</span>
-          </div>
+          {pkg.priceMonthly > 0 && (
+            <div class="paket-pricing-monthly">
+              <span>danach</span>
+              <strong>{pkg.priceMonthly}&thinsp;€</strong>
+              <span>/ Monat</span>
+            </div>
+          )}
 
           {pkg.pages && <p class="paket-pages">{pkg.pages}</p>}
 
@@ -170,6 +178,7 @@ const {
     margin-bottom: 0.25rem;
   }
   .price-amount { font-size: 2.25rem; font-weight: 700; color: var(--color-primary); line-height: 1; }
+  .price-anfrage { font-size: 1.5rem; }
   .price-label { font-size: 0.875rem; color: var(--color-muted); }
   .paket-pricing-monthly {
     font-size: 0.875rem;
