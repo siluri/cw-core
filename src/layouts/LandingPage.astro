@@ -32,6 +32,8 @@ import Footer, { type FooterLink } from '../components/layout/Footer.astro';
 
 export interface HeaderConfig {
   logoSrc?: string;
+  /** Inverted logo for the dark Header background. See CI branding guide. */
+  logoSrcDark?: string;
   logoWidth?: number;
   logoHeight?: number;
   navItems?: NavItem[];
@@ -47,6 +49,8 @@ export interface FooterConfig {
   email?: string;
   phone?: string;
   logoSrc?: string;
+  /** Inverted logo for the dark Footer background. See CI branding guide. */
+  logoSrcDark?: string;
   logoWidth?: number;
   logoHeight?: number;
   owner?: string;
@@ -129,6 +133,7 @@ const {
   <Header
     siteName={siteName}
     logoSrc={header.logoSrc}
+    logoSrcDark={header.logoSrcDark}
     logoWidth={header.logoWidth}
     logoHeight={header.logoHeight}
     navItems={header.navItems}
@@ -146,6 +151,7 @@ const {
     email={footer.email}
     phone={footer.phone}
     logoSrc={footer.logoSrc}
+    logoSrcDark={footer.logoSrcDark}
     logoWidth={footer.logoWidth}
     logoHeight={footer.logoHeight}
     owner={footer.owner}
