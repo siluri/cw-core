@@ -99,9 +99,17 @@ const {
     color: white;
     text-decoration: none;
   }
-  /* Logo auf dunklem Header: filter macht alle Farben weiß.
-     Kunden mit farbigem Logo legen /logo-white.svg in public/ ab.
-     Ohne Filter wären dunkle Logo-Teile auf dunklem Header unsichtbar. */
+  /* Logo auf dunklem Header-Hintergrund (--color-primary): immer weiß rendern.
+     KONVENTION (gilt auch für Footer.astro):
+       - /logo.svg  = Markenfarben-Version (für helle Hintergründe, OG-Image, etc.)
+       - Header + Footer haben IMMER --color-primary als Hintergrund → CSS-filter
+         macht jede SVG/PNG zu Weiß, unabhängig von der Originalfarbe.
+       - Kunden mit Mehrfarb-Logo (z.B. orange + navy Swoosh der auf dunklem BG
+         erhalten bleiben soll) legen /logo-white.svg ab und übergeben
+         `logoSrc="/logo-white.svg"` per Prop – dann greift der Filter trotzdem
+         korrekt (weiße Pixel → weiß).
+       - Alternative: `filter: drop-shadow(0 0 4px rgba(255,255,255,0.5))` für
+         einen dezenten Glow statt Vollweiß – als Opt-in per Prop erweiterbar. */
   .logo img {
     display: block;
     filter: brightness(0) invert(1);

@@ -166,7 +166,15 @@ const copyrightOwner = owner ?? siteName;
     text-decoration: none;
     margin-bottom: 0.875rem;
   }
-  .logo img { display: block; }
+  /* Logo auf dunklem Footer-Hintergrund (--color-primary): immer weiß rendern.
+     Konvention: /logo.svg ist die Markenfarben-Version für helle Hintergründe.
+     Header und Footer haben immer --color-primary als Hintergrund → filter macht
+     jede SVG/PNG weiß. Kunden mit Mehrfarb-Logo legen /logo-white.svg ab und
+     übergeben `logoSrc="/logo-white.svg"` über die Props. */
+  .logo img {
+    display: block;
+    filter: brightness(0) invert(1);
+  }
   .footer-brand p {
     font-size: 0.9rem;
     line-height: 1.7;
