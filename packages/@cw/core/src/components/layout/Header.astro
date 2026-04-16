@@ -24,8 +24,12 @@ export interface NavItem {
 interface Props {
   /** Site name (used as logo alt + text). */
   siteName: string;
-  /** Logo image path. Defaults to `/logo.svg`. */
+  /** Logo image path (light backgrounds, default). Defaults to `/logo.svg`. */
   logoSrc?: string;
+  /** Logo for dark backgrounds (Header is always dark). Defaults to `logoSrc`.
+   *  Customers with a multi-color logo provide `/logo-inverted.svg` and pass it here
+   *  per CI branding convention. */
+  logoSrcDark?: string;
   /** Logo width in px. */
   logoWidth?: number;
   /** Logo height in px. */
@@ -43,6 +47,7 @@ interface Props {
 const {
   siteName,
   logoSrc = '/logo.svg',
+  logoSrcDark,
   logoWidth = 58,
   logoHeight = 28,
   navItems = [],
@@ -54,7 +59,7 @@ const {
 <header id="site-header">
   <div class="container">
     <a href="/" class="logo" aria-label={`${siteName} – Startseite`}>
-      <img src={logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="eager" />
+      <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="eager" />
       <span>{siteName}</span>
     </a>
 
@@ -99,20 +104,14 @@ const {
     color: white;
     text-decoration: none;
   }
-  /* Logo auf dunklem Header-Hintergrund (--color-primary): immer weiß rendern.
-     KONVENTION (gilt auch für Footer.astro):
-       - /logo.svg  = Markenfarben-Version (für helle Hintergründe, OG-Image, etc.)
-       - Header + Footer haben IMMER --color-primary als Hintergrund → CSS-filter
-         macht jede SVG/PNG zu Weiß, unabhängig von der Originalfarbe.
-       - Kunden mit Mehrfarb-Logo (z.B. orange + navy Swoosh der auf dunklem BG
-         erhalten bleiben soll) legen /logo-white.svg ab und übergeben
-         `logoSrc="/logo-white.svg"` per Prop – dann greift der Filter trotzdem
-         korrekt (weiße Pixel → weiß).
-       - Alternative: `filter: drop-shadow(0 0 4px rgba(255,255,255,0.5))` für
-         einen dezenten Glow statt Vollweiß – als Opt-in per Prop erweiterbar. */
+  /* KONVENTION Logo auf dunklem Hintergrund (gilt für Header + Footer):
+       - logoSrc      = Markenfarben-Version (/logo.svg) für helle Hintergründe
+       - logoSrcDark  = Invertiert-Variante (/logo-inverted.svg) für dunklen Header/Footer
+     Kein CSS-Filter: Die SVG-Datei selbst enthält die richtigen Farben per
+     CI-Branding-Guide (orange bleibt, navy → rgba(255,255,255,0.9)).
+     Kunden ohne logoSrcDark bekommen einfach dieselbe Datei auf beiden Hintergründen. */
   .logo img {
     display: block;
-    filter: brightness(0) invert(1);
   }
   #main-nav {
     display: flex;
