@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 0.5rem;
   background: var(--color-accent);
-  color: white;
+  color: var(--color-accent-btn-text, white);
   font-weight: 700;
   font-size: 1rem;
   min-height: 48px;
