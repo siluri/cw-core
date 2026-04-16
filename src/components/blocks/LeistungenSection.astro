@@ -35,6 +35,8 @@ interface Props {
   items?: LeistungItem[];
   /** Label for the "read more" link. Defaults to "Mehr erfahren". */
   readMoreLabel?: string;
+  /** Max columns on desktop. Defaults to 2. */
+  columns?: 2 | 3 | 4;
 }
 
 const {
@@ -42,6 +44,7 @@ const {
   subheading,
   items = [],
   readMoreLabel = 'Mehr erfahren',
+  columns = 2,
 } = Astro.props;
 ---
 
@@ -50,7 +53,7 @@ const {
     <div class="container">
       <h2 class="section-heading">{heading}</h2>
       {subheading && <p class="section-subheading">{subheading}</p>}
-      <div class="leistungen-grid">
+      <div class="leistungen-grid" style={`--cols:${columns}`}>
         {items.map((item) => (
           <div class="leistung-card">
             {item.icon && <div class="leistung-icon" aria-hidden="true">{item.icon}</div>}
@@ -77,9 +80,12 @@ const {
 
   .leistungen-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(var(--cols, 2), 1fr);
     gap: 1.5rem;
     margin-top: 3rem;
+  }
+  @media (max-width: 640px) {
+    .leistungen-grid { grid-template-columns: 1fr; }
   }
 
   .leistung-card {
