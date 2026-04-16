@@ -5,6 +5,8 @@
  * Does NOT include @import "tailwindcss" or @theme – those go in the customer's tokens.css.
  *
  * Customer tokens.css should be:
+ *   @import "@fontsource-variable/plus-jakarta-sans";  ← self-hosted, DSGVO-konform
+ *   @import "@fontsource-variable/inter";
  *   @import "tailwindcss";
  *   @import "@cw/core/styles/tokens-base.css";
  *   @theme {
@@ -12,10 +14,12 @@
  *     --color-primary-light: #...;  ← etwas heller als primary
  *     --color-accent: #...;         ← Akzentfarbe (Buttons, Highlights)
  *     --color-accent-hover: #...;   ← Hover-State der Akzentfarbe
- *     --color-accent-text: #...;    ← MUSS WCAG AA 4.5:1 auf Weiß bestehen!
+ *     --color-accent-text: #...;    ← Textfarbe für Links (WCAG AA 4.5:1 auf Weiß)
+ *     --color-accent-btn-text: ...; ← Textfarbe auf Accent-Button (Standard: white)
  *     --color-surface: #...;        ← Hintergrund für Karten/Sections
  *     --color-muted: #...;          ← Gedämpfte Textfarbe
- *     --font-sans: ...;             ← System-UI Stack (keine Google Fonts!)
+ *     --font-heading: ...;          ← Heading-Font (Plus Jakarta Sans per CI-Guide)
+ *     --font-sans: ...;             ← Body-Font (Inter per CI-Guide)
  *   }
  */
 
@@ -29,7 +33,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-sans);
+  font-family: var(--font-heading, var(--font-sans));
   line-height: 1.2;
   font-weight: 700;
 }
