@@ -9,6 +9,7 @@
  *   node node_modules/@cw/core/scripts/generate-og.mjs \
  *     --name "Steller Sanierungen" \
  *     --tagline "Ein Ansprechpartner. Komplette Sanierung." \
+ *     --cta "Kostenlose Erstbesichtigung anfragen" \
  *     --domain "steller-sanierungen.com" \
  *     --primary "#1D1E3B" \
  *     --accent "#DE1668" \
@@ -34,11 +35,17 @@ const args = parseArgs(process.argv);
 
 const name = args.name || 'Firmenname';
 const tagline = args.tagline || '';
+const cta = args.cta;
 const domain = args.domain || '';
 const primary = args.primary || '#1D1E3B';
 const accent = args.accent || '#EF7612';
 const outPath = args.out || 'public/og/default.png';
 const logoPath = args.logo || null;
+
+if (!cta) {
+  console.error('✗ --cta ist Pflicht (z.B. --cta "Jetzt anfragen")');
+  process.exit(1);
+}
 
 // Escape XML special chars in text
 function esc(str) {
@@ -77,9 +84,20 @@ const taglineSvg = taglineLines
   .map((line, i) => `  <text x="600" y="${taglineY + i * 45}" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="32" text-anchor="middle" fill="${accent}">${esc(line)}</text>`)
   .join('\n');
 
+// CTA button (pill shape with accent color)
+const ctaText = esc(cta);
+const ctaCharWidth = cta.length * 11;
+const ctaPadding = 48;
+const ctaWidth = ctaCharWidth + ctaPadding * 2;
+const ctaHeight = 48;
+const ctaX = 600 - ctaWidth / 2;
+const ctaY = taglineY + taglineLines.length * 45 + 30;
+const ctaSvg = `  <rect x="${ctaX}" y="${ctaY}" width="${ctaWidth}" height="${ctaHeight}" rx="24" fill="${accent}"/>
+  <text x="600" y="${ctaY + 32}" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#ffffff">${ctaText}</text>`;
+
 // Domain at bottom
 const domainSvg = domain
-  ? `  <text x="600" y="585" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.45)">${esc(domain)}</text>`
+  ? `  <text x="600" y="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.45)">${esc(domain)}</text>`
   : '';
 
 // Accent bar at top
@@ -88,6 +106,7 @@ const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="6" fill="${accent}"/>
 ${nameSvg}
 ${taglineSvg}
+${ctaSvg}
 ${domainSvg}
 </svg>`;
 
