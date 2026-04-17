@@ -17,8 +17,10 @@ import ContactForm from '../forms/ContactForm.astro';
 interface Props {
   /** Site/employer name (interpolated into subject + mailto subject). */
   siteName?: string;
-  /** Web3Forms access key. If empty / starts with "TODO", the mailto fallback is rendered. */
+  /** Web3Forms access key. If empty / starts with "TODO", the mailto fallback is rendered. Ignored if `actionUrl` is set. */
   formKey?: string;
+  /** Custom submit endpoint (e.g. "/api/contact"). When set, Web3Forms is bypassed. */
+  actionUrl?: string;
   /** Contact email used for the mailto fallback. Required for the fallback to render meaningfully. */
   kontaktEmail?: string;
   /** Optional override for the section heading. */
@@ -30,12 +32,13 @@ interface Props {
 const {
   siteName = '',
   formKey = '',
+  actionUrl,
   kontaktEmail = '',
   heading = 'Jetzt bewerben',
   subheading = 'Wir melden uns innerhalb von 48 Stunden bei dir.',
 } = Astro.props;
 
-const hasFormKey = !!formKey && !formKey.startsWith('TODO');
+const hasEndpoint = !!actionUrl || (!!formKey && !formKey.startsWith('TODO'));
 const subject = `Bewerbung bei ${siteName}`;
 ---
 <section class="bewerbung-section" id="bewerbung">
@@ -45,10 +48,11 @@ const subject = `Bewerbung bei ${siteName}`;
       <p class="section-subheading">{subheading}</p>
     </div>
 
-    {hasFormKey ? (
+    {hasEndpoint ? (
       <div class="form-wrap">
         <ContactForm
-          formKey={formKey}
+          formKey={actionUrl ? undefined : formKey}
+          actionUrl={actionUrl}
           subject={subject}
           formType="bewerbung"
           fallbackEmail={kontaktEmail}
