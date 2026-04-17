@@ -143,7 +143,7 @@ const copyrightOwner = owner ?? siteName;
 
     <div class="footer-bottom">
       <p>© {year} {copyrightOwner}{legalForm ? ` · ${legalForm}` : ''}{city ? ` · ${city}` : ''}</p>
-      {tagline && <p class="footer-tagline">{tagline}</p>}
+      <p class="footer-credit">{tagline && <span class="footer-tagline">{tagline} · </span>}Erstellt von <a href="https://blitzsicht.com?ref=footer" target="_blank" rel="noopener">Blitzsicht</a></p>
     </div>
   </div>
 </footer>
@@ -221,6 +221,12 @@ const copyrightOwner = owner ?? siteName;
     gap: 0.5rem;
   }
   .footer-tagline { font-style: italic; }
+  .footer-credit a {
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-credit a:hover { color: white; text-decoration: underline; }
 
   @media (max-width: 767px) {
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
