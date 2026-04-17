@@ -119,19 +119,23 @@ let pipeline = sharp(Buffer.from(svg)).png({ quality: 85, compressionLevel: 9 })
 if (logoPath) {
   try {
     const logoBuffer = readFileSync(logoPath);
-    // Resize logo to fit nicely (max 120px height, centered top area)
+    // Resize logo to fit nicely (max 80px height, horizontally centered)
     const resizedLogo = await sharp(logoBuffer)
       .resize({ height: 80, fit: 'inside' })
       .toBuffer();
+
+    const logoMeta = await sharp(resizedLogo).metadata();
+    const logoLeft = Math.round((1200 - logoMeta.width) / 2);
 
     pipeline = sharp(Buffer.from(svg))
       .composite([{
         input: resizedLogo,
         top: 40,
-        left: 540, // roughly centered for ~120px wide logo
-        gravity: 'northwest',
+        left: logoLeft,
       }])
       .png({ quality: 85, compressionLevel: 9 });
+
+    console.log(`  Logo: ${logoPath} (${logoMeta.width}x${logoMeta.height}, left=${logoLeft})`);
   } catch (e) {
     console.warn(`⚠ Logo nicht gefunden (${logoPath}), OG-Image ohne Logo generiert.`);
   }

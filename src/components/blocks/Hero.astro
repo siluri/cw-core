@@ -115,8 +115,8 @@ const hasImage = !!image;
         <Image
           src={image!}
           alt={imageAlt ?? siteName ?? ''}
-          width={600}
-          height={450}
+          widths={[400, 600, 800]}
+          sizes="(max-width: 767px) 100vw, 45vw"
           loading="eager"
           fetchpriority="high"
           format="webp"
