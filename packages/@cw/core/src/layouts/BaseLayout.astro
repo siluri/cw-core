@@ -52,10 +52,13 @@ export interface SchemaProps {
   country?: string;
   email?: string;
   phone?: string;
-  areaServed?: string;
+  areaServed?: string | string[] | readonly string[];
   priceRange?: string;
   sameAs?: string[] | readonly string[];
   availableLanguage?: string[];
+  openingHours?: string[] | readonly string[];
+  geo?: { latitude: number; longitude: number };
+  foundingDate?: string;
 }
 
 interface Props {
@@ -178,6 +181,9 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
         priceRange={schema.priceRange}
         sameAs={schema.sameAs}
         availableLanguage={schema.availableLanguage}
+        openingHours={schema.openingHours}
+        geo={schema.geo}
+        foundingDate={schema.foundingDate}
       />
     )}
 
