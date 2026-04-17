@@ -9,7 +9,7 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
 <header id="site-header">
   <div class="container">
     <a href="/" class="logo" aria-label={`${siteData.name} – Startseite`}>
-      <img src="/logo.svg" alt={siteData.name} loading="eager" />
+      <img src="/logo.svg" alt={siteData.name} width="58" height="28" loading="eager" />
       <span>{siteData.name}</span>
     </a>
 
@@ -59,8 +59,6 @@ const karriereEnabled = siteData.karriere?.enabled !== false;
      Ohne Filter wären dunkle Logo-Teile auf dunklem Header unsichtbar. */
   .logo img {
     display: block;
-    width: auto;
-    height: 40px;
     filter: brightness(0) invert(1);
   }
   #main-nav {
