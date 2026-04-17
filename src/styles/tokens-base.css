@@ -12,6 +12,7 @@
  *   @theme {
  *     --color-primary: #...;        ← Hauptfarbe (dunkel)
  *     --color-primary-light: #...;  ← etwas heller als primary
+ *     --color-primary-dark: #...;   ← dunkler als primary (PageHero-Gradient, optional)
  *     --color-accent: #...;         ← Akzentfarbe (Buttons, Highlights)
  *     --color-accent-hover: #...;   ← Hover-State der Akzentfarbe
  *     --color-accent-text: #...;    ← Textfarbe für Links (WCAG AA 4.5:1 auf Weiß)

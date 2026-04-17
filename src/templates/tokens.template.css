@@ -17,6 +17,9 @@
   /* Etwas heller als primary – für Dropdown-Hintergründe */
   --color-primary-light: #TODO;
 
+  /* Dunkler als primary – für PageHero-Gradient (optional, auto-berechnet wenn nicht gesetzt) */
+  /* --color-primary-dark: #TODO; */
+
   /* Akzentfarbe – für Buttons, Highlights, Links */
   --color-accent: #TODO;
 

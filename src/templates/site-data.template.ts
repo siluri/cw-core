@@ -27,6 +27,7 @@ export const siteData = {
     country: 'DE',
     phone: 'TODO: +49 123 456789',    // Mit tel:-Link im Footer + Kontakt
     ustIdNr: undefined as string | undefined,
+    handelsregister: undefined as string | undefined, // z.B. 'HRB 12345, Amtsgericht Regensburg'
   },
 
   // ─── Kontakt ───────────────────────────────────────────────────────────────
@@ -34,7 +35,7 @@ export const siteData = {
     email: 'TODO: info@firma.de',
     phone: 'TODO: +49 123 456789',    // Gleich wie legal.phone
     web3formsKey: 'TODO',             // web3forms.com → kostenlos registrieren, Access Key kopieren
-    calendlyUrl: '',                  // Optional: Calendly-Booking-URL
+    calUrl: '',                       // Optional: Cal.com-Booking-URL (z.B. 'https://cal.eu/firma/30min')
   },
 
   // ─── Analytics ─────────────────────────────────────────────────────────────
@@ -49,6 +50,12 @@ export const siteData = {
     defaultTitle: 'TODO: Firmenname – Kurzslogan',
     defaultDescription: 'TODO: 1-2 Sätze für Google-Snippet',
     ogImage: '/og/og-image.png',
+    // Schema.org LocalBusiness — verbessert Knowledge Panel + AI-Suche
+    areaServed: [] as string[],             // z.B. ['Regensburg', 'Barbing', 'Lappersdorf']
+    sameAs: [] as string[],                 // Social-Profile-URLs für Entity-Resolution
+    openingHours: [] as string[],           // z.B. ['Mo-Fr 08:00-17:00']
+    foundingDate: undefined as string | undefined,  // z.B. '2015'
+    geo: undefined as { latitude: number; longitude: number } | undefined,
   },
 
   // ─── Navigation ────────────────────────────────────────────────────────────

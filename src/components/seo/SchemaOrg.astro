@@ -59,7 +59,7 @@ interface Props {
   /** List of profile URLs (sameAs). Google Business Profile, Facebook, LinkedIn, etc. */
   sameAs?: string[] | readonly string[];
   /** Available languages for the contact point. Defaults to `['German']`. */
-  availableLanguage?: string[];
+  availableLanguage?: string[] | readonly string[];
   /**
    * Opening hours in schema.org format.
    * Example: `['Mo-Fr 08:00-17:00', 'Sa 09:00-12:00']`.

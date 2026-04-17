@@ -32,7 +32,7 @@ interface Props {
   /** Section subheading, typically a tagline. */
   subheading?: string;
   /** Feature items to render. Section is hidden if array is empty. */
-  items?: LeistungItem[];
+  items?: readonly LeistungItem[];
   /** Label for the "read more" link. Defaults to "Mehr erfahren". */
   readMoreLabel?: string;
   /** Max columns on desktop. Defaults to 2. */

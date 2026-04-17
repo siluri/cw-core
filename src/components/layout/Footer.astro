@@ -57,11 +57,11 @@ interface Props {
   /** Heading for the "services" column. Defaults to "Leistungen". */
   leistungenHeading?: string;
   /** Links rendered in the "services" column. */
-  leistungenLinks?: FooterLink[];
+  leistungenLinks?: readonly FooterLink[];
   /** Heading for the "legal" column. Defaults to "Rechtliches". */
   rechtlichesHeading?: string;
   /** Links rendered in the "legal" column. Defaults to Impressum + Datenschutz. */
-  rechtlichesLinks?: FooterLink[];
+  rechtlichesLinks?: readonly FooterLink[];
   /** Show "/karriere" link in the services column. */
   showKarriereLink?: boolean;
   /** Karriere link label. Defaults to "Karriere". */

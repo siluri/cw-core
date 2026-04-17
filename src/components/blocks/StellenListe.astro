@@ -29,7 +29,7 @@ export interface StelleItem {
 
 interface Props {
   /** Open positions. Empty array triggers the Initiativbewerbung fallback. */
-  items?: StelleItem[];
+  items?: readonly StelleItem[];
   /** Site/employer name (for JSON-LD hiringOrganization + subheading). */
   siteName?: string;
   /** Canonical site URL (for JSON-LD hiringOrganization.sameAs). */

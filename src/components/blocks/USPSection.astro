@@ -18,7 +18,7 @@ export interface USPItem {
 
 interface Props {
   /** USP items to render. Section is omitted entirely if empty. */
-  items?: USPItem[];
+  items?: readonly USPItem[];
 }
 
 const { items = [] } = Astro.props;

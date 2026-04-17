@@ -22,7 +22,7 @@ export interface BenefitItem {
 
 interface Props {
   /** Benefit cards. Section is omitted entirely if empty. */
-  items?: BenefitItem[];
+  items?: readonly BenefitItem[];
   /** Site/employer name (interpolated into subheading). */
   siteName?: string;
   /** Optional override for the section heading. */

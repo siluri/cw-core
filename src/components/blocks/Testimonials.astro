@@ -21,7 +21,7 @@ export interface Testimonial {
 
 interface Props {
   /** Testimonial entries. Section is omitted if empty. */
-  items?: Testimonial[];
+  items?: readonly Testimonial[];
   /** Site name used in itemprop="name" for the reviewed Product. */
   siteName?: string;
   /** Optional override for the section heading. */

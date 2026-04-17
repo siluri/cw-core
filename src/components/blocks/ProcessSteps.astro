@@ -21,17 +21,20 @@ export interface ProcessStep {
 
 interface Props {
   /** Step entries. Section is omitted entirely if empty. */
-  items?: ProcessStep[];
+  items?: readonly ProcessStep[];
   /** Optional override for the section heading. */
   heading?: string;
   /** Optional override for the section subheading. `{count}` is replaced with `items.length`. */
   subheadingTemplate?: string;
+  /** Fixed column count. Default: auto-fit (responsive). Use 3 for 6-item grids to avoid orphan rows. */
+  columns?: 2 | 3 | 4;
 }
 
 const {
   items = [],
   heading = "So funktioniert's",
   subheadingTemplate = 'Von Erstgespräch bis Live-Gang in {count} einfachen Schritten.',
+  columns,
 } = Astro.props;
 
 const subheading = subheadingTemplate.replace('{count}', String(items.length));
@@ -44,7 +47,7 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
       <p class="section-subheading">{subheading}</p>
     </div>
 
-    <div class="steps">
+    <div class={`steps${columns ? ` cols-${columns}` : ''}`}>
       {items.map((step) => (
         <div class="step">
           <div class="step-nr" aria-hidden="true">{step.nr}</div>
@@ -68,6 +71,9 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
   }
+  .steps.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .steps.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .steps.cols-4 { grid-template-columns: repeat(4, 1fr); }
   .step { position: relative; }
   .step-nr {
     font-size: 3rem;

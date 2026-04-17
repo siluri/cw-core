@@ -17,7 +17,7 @@ export interface FAQItem {
 
 interface Props {
   /** FAQ entries. Section is omitted entirely if empty. */
-  items?: FAQItem[];
+  items?: readonly FAQItem[];
   /** Optional override for the section heading. */
   heading?: string;
   /** Optional override for the section subheading. */

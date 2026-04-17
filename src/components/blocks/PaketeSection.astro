@@ -26,7 +26,7 @@ export interface PaketeItem {
   /** Optional pages/scope hint (rendered as small pill). */
   pages?: string;
   /** Bullet feature list. */
-  features: string[];
+  features: readonly string[];
   /** If true, the card is highlighted (accent border, shadow, "Meistgewählt" badge). */
   highlighted?: boolean;
   /** CTA href; defaults to `/kontakt`. */
@@ -37,7 +37,7 @@ export interface PaketeItem {
 
 interface Props {
   /** Package cards. */
-  items?: PaketeItem[];
+  items?: readonly PaketeItem[];
   /** Whether to render the section header. */
   showTitle?: boolean;
   /** Optional override for the section heading. */

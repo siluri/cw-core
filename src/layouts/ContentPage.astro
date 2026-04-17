@@ -29,7 +29,7 @@ export interface HeaderConfig {
   logoSrcDark?: string;
   logoWidth?: number;
   logoHeight?: number;
-  navItems?: NavItem[];
+  navItems?: readonly NavItem[];
   showKarriereLink?: boolean;
   karriereLabel?: string;
   karriereHref?: string;
@@ -49,9 +49,9 @@ export interface FooterConfig {
   legalForm?: string;
   city?: string;
   leistungenHeading?: string;
-  leistungenLinks?: FooterLink[];
+  leistungenLinks?: readonly FooterLink[];
   rechtlichesHeading?: string;
-  rechtlichesLinks?: FooterLink[];
+  rechtlichesLinks?: readonly FooterLink[];
   showKarriereLink?: boolean;
   karriereLabel?: string;
   karriereHref?: string;
