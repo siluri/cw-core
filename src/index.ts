@@ -28,6 +28,8 @@ export type { BenefitItem } from './components/blocks/ArbeitgeberVorteile.astro'
 export type { StelleItem, StelleTyp } from './components/blocks/StellenListe.astro';
 export type { StatItem } from './components/blocks/StatsGrid.astro';
 export type { FeedbackItem } from './components/blocks/KundenfeedbackSection.astro';
+export type { AEOItem } from './components/blocks/AEOSection.astro';
+export type { ReferenzItem } from './components/blocks/ReferenzenGrid.astro';
 
 // ---------------------------------------------------------------------------
 // Layout component types
