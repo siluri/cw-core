@@ -46,16 +46,29 @@ interface Props {
   country?: string;
   /** Contact email. */
   email?: string;
-  /** Optional phone number. Omitted from JSON-LD if empty. */
+  /** Optional phone number. Emitted at LocalBusiness root AND in ContactPoint. */
   phone?: string;
-  /** Area served (ISO country code). Defaults to "DE". */
-  areaServed?: string;
+  /**
+   * Area served. Single city/region or array for multi-location coverage.
+   * Emitted as schema.org `Place` objects so Google can map them to GEO entities.
+   * Example: `['Regensburg', 'Barbing', 'Neutraubling']` or `'DE'`.
+   */
+  areaServed?: string | string[] | readonly string[];
   /** Schema.org `priceRange` hint. Defaults to "€€". */
   priceRange?: string;
-  /** List of profile URLs (sameAs). */
-  sameAs?: string[];
+  /** List of profile URLs (sameAs). Google Business Profile, Facebook, LinkedIn, etc. */
+  sameAs?: string[] | readonly string[];
   /** Available languages for the contact point. Defaults to `['German']`. */
   availableLanguage?: string[];
+  /**
+   * Opening hours in schema.org format.
+   * Example: `['Mo-Fr 08:00-17:00', 'Sa 09:00-12:00']`.
+   */
+  openingHours?: string[] | readonly string[];
+  /** Geographic coordinates for GEO ranking. */
+  geo?: { latitude: number; longitude: number };
+  /** Founding date (ISO 8601). */
+  foundingDate?: string;
 }
 
 const {
@@ -74,7 +87,17 @@ const {
   priceRange = '€€',
   sameAs = [],
   availableLanguage = ['German'],
+  openingHours,
+  geo,
+  foundingDate,
 } = Astro.props;
+
+// areaServed as Place[] is more precise than a raw string for multi-city GEO.
+// Single string stays as-is (covers "DE" country-level and simple city cases).
+const areaServedArr = Array.isArray(areaServed) ? areaServed : null;
+const areaServedValue = areaServedArr
+  ? areaServedArr.map((a) => ({ '@type': 'Place', name: a }))
+  : areaServed;
 
 const resolvedLogo = logoUrl ?? `${url}/logo.png`;
 const resolvedImage = new URL(ogImage, url).toString();
@@ -90,6 +113,7 @@ const localBusinessSchema = {
   url,
   logo: resolvedLogo,
   image: resolvedImage,
+  ...(phone ? { telephone: phone } : {}),
   ...(street || zip || city || country
     ? {
         address: {
@@ -101,6 +125,19 @@ const localBusinessSchema = {
         },
       }
     : {}),
+  ...(geo
+    ? {
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+        },
+      }
+    : {}),
+  ...(openingHours && openingHours.length
+    ? { openingHours: [...openingHours] }
+    : {}),
+  ...(foundingDate ? { foundingDate } : {}),
   ...(email
     ? {
         contactPoint: {
@@ -112,9 +149,9 @@ const localBusinessSchema = {
         },
       }
     : {}),
-  areaServed,
+  areaServed: areaServedValue,
   priceRange,
-  sameAs,
+  sameAs: [...sameAs],
 } as unknown as WithContext<LocalBusiness>;
 
 const webSiteSchema: WithContext<WebSite> = {
