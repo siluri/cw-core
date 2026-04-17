@@ -17,8 +17,10 @@
  *     --color-accent-hover: #...;   ← Hover-State der Akzentfarbe
  *     --color-accent-text: #...;    ← Textfarbe für Links (WCAG AA 4.5:1 auf Weiß)
  *     --color-accent-btn-text: ...; ← Textfarbe auf Accent-Button (Standard: white)
+ *     --color-text: #...;            ← Body-Textfarbe (Standard: #1a1a1a)
  *     --color-surface: #...;        ← Hintergrund für Karten/Sections
  *     --color-muted: #...;          ← Gedämpfte Textfarbe
+ *     --color-footer-bg: #...;      ← Footer-Hintergrund (Standard: --color-primary-dark oder #111)
  *     --font-heading: ...;          ← Heading-Font (Plus Jakarta Sans per CI-Guide)
  *     --font-sans: ...;             ← Body-Font (Inter per CI-Guide)
  *   }
@@ -28,7 +30,7 @@
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-primary);
+  color: var(--color-text, #1a1a1a);
   background: #ffffff;
   line-height: 1.6;
 }
