@@ -103,7 +103,7 @@ const copyrightOwner = owner ?? siteName;
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="/" class="logo-img">
-          <img src={logoSrcDark ?? logoSrc} alt={siteName} loading="lazy" />
+          <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="lazy" />
         </a>
         <a href="/" class="logo-name">
           {siteName}
@@ -223,10 +223,11 @@ const copyrightOwner = owner ?? siteName;
   .footer-tagline { font-style: italic; }
   .footer-credit a {
     color: rgba(255,255,255,0.55);
-    text-decoration: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
     transition: color 0.15s;
   }
-  .footer-credit a:hover { color: white; text-decoration: underline; }
+  .footer-credit a:hover { color: white; }
 
   @media (max-width: 767px) {
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }

@@ -30,6 +30,12 @@
   /* Immer mit https://webaim.org/resources/contrastchecker/ prüfen! */
   --color-accent-text: #TODO;
 
+  /* Textfarbe auf Accent-Buttons – Standard: white.
+   * MUSS WCAG AA 3:1 Kontrast auf --color-accent bestehen (Large Text / Buttons).
+   * Bei hellen Akzentfarben (z.B. Orange #EF7612) ggf. auf #111 (dunkel) setzen.
+   * Prüfen: https://webaim.org/resources/contrastchecker/ */
+  /* --color-accent-btn-text: white; */
+
   /* Hintergrundfarbe für Karten und Sections (meist sehr helles Grau) */
   --color-surface: #f8f9fa;
 

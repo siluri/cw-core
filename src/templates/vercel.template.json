@@ -29,7 +29,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' plausible.io tally.so; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src tally.so; connect-src 'self' plausible.io; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' tally.so"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io https://tally.so; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src https://tally.so; connect-src 'self' https://plausible.io; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://tally.so; frame-ancestors 'none'"
         }
       ]
     }
