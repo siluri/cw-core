@@ -19,9 +19,13 @@
  * Requires: sharp (already a devDependency in customer repos)
  */
 
+import { createRequire } from 'node:module';
 import { readdir, stat, rename, unlink } from 'node:fs/promises';
 import { join, extname, basename } from 'node:path';
-import sharp from 'sharp';
+
+// Resolve sharp from the consumer's node_modules (CWD), not from this script's location.
+const require = createRequire(join(process.cwd(), 'node_modules', '.placeholder'));
+const sharp = require('sharp');
 
 const args = process.argv.slice(2);
 const getArg = (name, fallback) => {
