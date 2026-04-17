@@ -26,6 +26,8 @@ export type { Testimonial } from './components/blocks/Testimonials.astro';
 export type { ProcessStep } from './components/blocks/ProcessSteps.astro';
 export type { BenefitItem } from './components/blocks/ArbeitgeberVorteile.astro';
 export type { StelleItem, StelleTyp } from './components/blocks/StellenListe.astro';
+export type { StatItem } from './components/blocks/StatsGrid.astro';
+export type { FeedbackItem } from './components/blocks/KundenfeedbackSection.astro';
 
 // ---------------------------------------------------------------------------
 // Layout component types
@@ -50,6 +52,11 @@ export type { SchemaProps } from './layouts/BaseLayout.astro';
 // Forms / utilities
 // ---------------------------------------------------------------------------
 export type { SubmitOptions, SubmitResult } from './utils/forms/submit';
+
+// ---------------------------------------------------------------------------
+// Shared data types
+// ---------------------------------------------------------------------------
+export type { LeistungDetail } from './types/leistung-detail';
 
 // ---------------------------------------------------------------------------
 // Site data template type

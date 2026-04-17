@@ -1,0 +1,131 @@
+---
+/**
+ * KundenfeedbackSection — blockquote grid WITHOUT Schema.org Review markup.
+ *
+ * Alternative to Testimonials.astro for customers who have paraphrased
+ * feedback quotes (not verified Google reviews). No star ratings, no
+ * reviewer names — just anonymous quotes in a card grid.
+ *
+ * @example
+ *   <KundenfeedbackSection
+ *     items={selectedFeedback}
+ *     heading="Was Kunden sagen"
+ *     note="Paraphrasierte Kundenaussagen."
+ *   />
+ */
+export interface FeedbackItem {
+  /** Quote text. */
+  text: string;
+}
+
+interface Props {
+  items?: readonly FeedbackItem[];
+  heading?: string;
+  subheading?: string;
+  /** Disclaimer note shown below the grid. */
+  note?: string;
+}
+
+const {
+  items = [],
+  heading = 'Was Kunden sagen',
+  subheading,
+  note,
+} = Astro.props;
+---
+{items.length > 0 && (
+<section class="feedback-section">
+  <div class="container">
+    <div class="feedback-header">
+      <h2>{heading}</h2>
+      {subheading && <p>{subheading}</p>}
+    </div>
+
+    <div class="feedback-grid">
+      {items.map((f) => (
+        <blockquote class="feedback-card">
+          <p>{f.text}</p>
+        </blockquote>
+      ))}
+    </div>
+
+    {note && <p class="feedback-note">{note}</p>}
+  </div>
+</section>
+)}
+
+<style>
+  .feedback-section {
+    padding: var(--section-padding, 5rem) 0;
+    background: var(--color-surface);
+  }
+  .feedback-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 44rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .feedback-header h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+  }
+  .feedback-header p {
+    color: var(--color-muted, #4b5563);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .feedback-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .feedback-grid { grid-template-columns: 1fr; }
+  }
+  .feedback-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.75rem;
+    border: 1px solid #e5e7eb;
+    margin: 0;
+    position: relative;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .feedback-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+  .feedback-card::before {
+    content: "\201C";
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--color-primary);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+  }
+  .feedback-card p {
+    position: relative;
+    margin: 0;
+    padding-top: 1rem;
+    line-height: 1.65;
+    color: var(--color-text, #1f2937);
+    font-size: 0.9375rem;
+  }
+  .feedback-note {
+    margin: 3rem auto 0;
+    max-width: 44rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--color-muted, #6b7280);
+    font-style: italic;
+    line-height: 1.55;
+  }
+</style>
