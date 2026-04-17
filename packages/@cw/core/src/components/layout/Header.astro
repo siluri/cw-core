@@ -59,7 +59,7 @@ const {
 <header id="site-header">
   <div class="container">
     <a href="/" class="logo" aria-label={`${siteName} – Startseite`}>
-      <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="eager" />
+      <img src={logoSrcDark ?? logoSrc} alt={siteName} loading="eager" />
       <span>{siteName}</span>
     </a>
 
@@ -112,6 +112,8 @@ const {
      Kunden ohne logoSrcDark bekommen einfach dieselbe Datei auf beiden Hintergründen. */
   .logo img {
     display: block;
+    width: auto;
+    height: 40px;
   }
   #main-nav {
     display: flex;

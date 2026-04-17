@@ -102,8 +102,10 @@ const copyrightOwner = owner ?? siteName;
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="/" class="logo">
-          <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="lazy" />
+        <a href="/" class="logo-img">
+          <img src={logoSrcDark ?? logoSrc} alt={siteName} loading="lazy" />
+        </a>
+        <a href="/" class="logo-name">
           {siteName}
         </a>
         {description && <p>{description}</p>}
@@ -160,20 +162,25 @@ const copyrightOwner = owner ?? siteName;
     padding-bottom: 2.5rem;
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .logo-img {
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .logo-img img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 80px;
+  }
+  .logo-name {
+    display: block;
     font-weight: 700;
     font-size: 1.125rem;
     color: white;
     text-decoration: none;
     margin-bottom: 0.875rem;
   }
-  /* Kein CSS-Filter: logoSrcDark zeigt auf die Invertiert-Variante (/logo-inverted.svg)
-     mit den richtigen Farben per CI-Branding-Guide. Ohne logoSrcDark-Prop fällt es
-     auf logoSrc zurück (dann ggf. sichtbarkeitsproblem bei dunklen Logos). */
-  .logo img { display: block; }
   .footer-brand p {
     font-size: 0.9rem;
     line-height: 1.7;
