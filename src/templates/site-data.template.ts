@@ -20,7 +20,7 @@ export const siteData = {
   // ─── Firmendaten (Impressum) ───────────────────────────────────────────────
   legal: {
     owner: 'TODO: Vor- und Nachname', // Impressum-Pflichtfeld
-    form: 'Einzelunternehmen',         // oder GmbH, UG, GbR, etc.
+    form: 'Einzelunternehmen',         // Freitext-Anzeige (z.B. "GmbH & Co. KG")
     street: 'TODO: Musterstraße 1',
     zip: 'TODO: 12345',
     city: 'TODO: Musterstadt',
@@ -28,6 +28,46 @@ export const siteData = {
     phone: 'TODO: +49 123 456789',    // Mit tel:-Link im Footer + Kontakt
     ustIdNr: undefined as string | undefined,
     handelsregister: undefined as string | undefined, // z.B. 'HRB 12345, Amtsgericht Regensburg'
+
+    // ─ B0 — Compliance-Schema für cw-audit Welle 2/3 Checker ─
+    // Rechtsform-Enum — bestimmt welche Felder Pflicht sind (HRB, Stammkapital etc.)
+    rechtsform: 'einzelunternehmer' as
+      | 'einzelunternehmer'
+      | 'ek'
+      | 'gbr'
+      | 'egbr'
+      | 'ug'
+      | 'gmbh'
+      | 'gmbh-co-kg'
+      | 'ag',
+    // Register-Enum — 'gnr' für eGbR seit MoPeG 01.01.2024
+    register: 'none' as 'none' | 'hrb' | 'hra' | 'gnr' | 'vr',
+    registerNummer: undefined as string | undefined,
+    registergericht: undefined as string | undefined,
+    // Explizite USt-ID-Pflicht (Kleinunternehmer § 19 UStG → false)
+    hasUstId: false,
+    // Erlaubnispflichtige Tätigkeit? (Handwerk, Lebensmittel, Finanzen, Heilberufe…)
+    aufsichtspflichtig: false,
+    aufsichtsbehoerde: undefined as { name: string; url: string } | undefined,
+    // § 5 Nr. 5 DDG — reglementierte Berufe (Kammerzugehörigkeit)
+    kammerMitglied: false,
+    kammer: undefined as
+      | {
+          name: string;
+          berufsbezeichnung: string;
+          verleihungsStaat: string;
+          berufsrechtLink: string;
+        }
+      | undefined,
+    // § 36 VSBG — nur bei Unternehmen >10 MA
+    vsbgPflichtig: false,
+  },
+
+  // ─── Content-Klassifikation (für § 18 MStV-Check) ─────────────────────────
+  // Hat die Site journalistisch-redaktionelle Inhalte (Blog/News)?
+  // → true erfordert V.i.S.d.P.-Angabe (§ 18 Abs. 2 MStV)
+  content: {
+    hasEditorial: false,
   },
 
   // ─── Kontakt ───────────────────────────────────────────────────────────────
