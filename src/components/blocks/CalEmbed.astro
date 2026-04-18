@@ -75,7 +75,7 @@ const {
 } = Astro.props;
 ---
 
-<div id={elementId} class="cal-embed" style={`min-height:${minHeight}`}>
+<div id={elementId} class="cal-embed" style={lazy ? 'min-height:280px' : `min-height:${minHeight}`}>
   {lazy && (
     <div class="cal-placeholder">
       <button class="cal-trigger" type="button">
@@ -101,6 +101,7 @@ const {
     data-cal-layout={layout}
     data-cal-element={`#${elementId}`}
     data-cal-lazy="true"
+    data-cal-min-height={minHeight}
   >
   (function() {
     var s = document.currentScript;
@@ -109,6 +110,7 @@ const {
     var brand = s.getAttribute('data-cal-brand');
     var layout = s.getAttribute('data-cal-layout');
     var elSel = s.getAttribute('data-cal-element');
+    var fullHeight = s.getAttribute('data-cal-min-height') || '680px';
 
     var container = document.querySelector(elSel);
     if (!container) return;
@@ -121,6 +123,8 @@ const {
     btn.addEventListener('click', function onTrigger() {
       if (loaded) return;
       loaded = true;
+
+      container.style.minHeight = fullHeight;
 
       var placeholder = container.querySelector('.cal-placeholder');
       if (placeholder) {
@@ -214,6 +218,7 @@ const {
   .cal-embed {
     border-radius: 1rem;
     overflow: hidden;
+    transition: min-height 0.3s ease-out;
   }
 
   .cal-placeholder {
@@ -221,8 +226,7 @@ const {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    min-height: inherit;
+    min-height: 280px;
     gap: 0.75rem;
     background: var(--color-surface, #f9fafb);
     border: 2px dashed #e5e7eb;

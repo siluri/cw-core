@@ -15,12 +15,29 @@ interface Props {
   subtext?: string;
   /** Path to background image (e.g. '/images/hero/wertermittlung.webp'). */
   backgroundImage?: string;
+  /** CSS background-position for the image. Default: 'center'. */
+  backgroundPosition?: string;
+  /** Overlay darkness. Default: 'medium'. */
+  overlayStrength?: 'light' | 'medium' | 'strong';
 }
 
-const { heading, subtext, backgroundImage } = Astro.props;
+const {
+  heading,
+  subtext,
+  backgroundImage,
+  backgroundPosition = 'center',
+  overlayStrength = 'medium',
+} = Astro.props;
+
+const overlayMap = {
+  light: 'rgba(29,30,59,0.45)',
+  medium: 'rgba(29,30,59,0.7)',
+  strong: 'rgba(29,30,59,0.85)',
+};
+const overlay = overlayMap[overlayStrength];
 
 const bgStyle = backgroundImage
-  ? `background: linear-gradient(rgba(29,30,59,0.7), rgba(29,30,59,0.85)), url('${backgroundImage}') center/cover no-repeat;`
+  ? `background: linear-gradient(${overlay}, ${overlay}), url('${backgroundImage}') ${backgroundPosition}/cover no-repeat;`
   : undefined;
 ---
 <section class="page-hero" style={bgStyle}>
@@ -50,5 +67,6 @@ const bgStyle = backgroundImage
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.0625rem;
     max-width: 44rem;
+    margin-inline: auto;
   }
 </style>
