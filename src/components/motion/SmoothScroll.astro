@@ -61,21 +61,6 @@ const cfg = JSON.stringify({ lerp, wheelMultiplier, duration, disableOnTouch });
         requestAnimationFrame(raf);
       };
       requestAnimationFrame(raf);
-
-      try {
-        const gsapMod: any = await import('gsap');
-        const stMod: any = await import('gsap/ScrollTrigger');
-        const gsap = gsapMod.default || gsapMod.gsap || gsapMod;
-        const ScrollTrigger = stMod.default || stMod.ScrollTrigger;
-        if (gsap && ScrollTrigger) {
-          gsap.registerPlugin(ScrollTrigger);
-          lenis.on('scroll', ScrollTrigger.update);
-          gsap.ticker.add((time: number) => lenis.raf(time * 1000));
-          gsap.ticker.lagSmoothing(0);
-        }
-      } catch {
-        /* GSAP optional */
-      }
     } catch (err) {
       console.warn('[cw-core motion] Lenis not installed. Install with `pnpm add lenis`.', err);
     }
