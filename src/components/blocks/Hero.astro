@@ -27,6 +27,7 @@ import AnimatedBlob from '../motion/AnimatedBlob.astro';
 import TextReveal from '../motion/TextReveal.astro';
 import StaggerGroup from '../motion/StaggerGroup.astro';
 import ParallaxImage from '../motion/ParallaxImage.astro';
+import MagneticButton from '../motion/MagneticButton.astro';
 
 export interface HeroCTA {
   label: string;
@@ -47,6 +48,8 @@ export interface HeroMotionConfig {
   stagger?: boolean;
   /** Parallax on hero image. */
   parallax?: boolean;
+  /** Magnetic pull on the PRIMARY CTA (secondary stays static by design). */
+  magnetic?: boolean;
 }
 
 interface Props {
@@ -88,7 +91,7 @@ const {
 const hasImage = !!image;
 const motionCfg: HeroMotionConfig =
   motion === true
-    ? { blob: true, textReveal: true, stagger: true, parallax: true }
+    ? { blob: true, textReveal: true, stagger: true, parallax: true, magnetic: true }
     : (motion || {});
 ---
 <section class:list={['hero', hasImage && 'hero--split', motionCfg.blob && 'hero--with-blob']}>
@@ -113,13 +116,25 @@ const motionCfg: HeroMotionConfig =
       {subtext && <p class="hero-sub">{subtext}</p>}
 
       <div class="hero-cta">
-        <a href={ctaPrimary.href} class="btn-accent">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-          {ctaPrimary.label}
-        </a>
+        {motionCfg.magnetic ? (
+          <MagneticButton>
+            <a href={ctaPrimary.href} class="btn-accent">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              {ctaPrimary.label}
+            </a>
+          </MagneticButton>
+        ) : (
+          <a href={ctaPrimary.href} class="btn-accent">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            {ctaPrimary.label}
+          </a>
+        )}
         {ctaSecondary && (
           <a href={ctaSecondary.href} class="btn-outline">
             {ctaSecondary.label}

@@ -16,6 +16,11 @@
  *   import SmoothScroll    from "@cw/core/components/motion/SmoothScroll.astro";  // needs `lenis` peer
  *   import ScrollProgress  from "@cw/core/components/motion/ScrollProgress.astro";
  *   import CustomCursor    from "@cw/core/components/motion/CustomCursor.astro";
+ *   import MagneticButton  from "@cw/core/components/motion/MagneticButton.astro";
+ *   import TiltCard        from "@cw/core/components/motion/TiltCard.astro";
+ *
+ * Layout primitives (zero runtime):
+ *   import BentoGrid       from "@cw/core/components/blocks/BentoGrid.astro";
  *
  * This barrel re-exports the public **types** that component consumers need
  * for typed props (e.g. when wiring `site-data.ts` into a Hero or Footer).
@@ -41,6 +46,7 @@ export type { StatItem } from './components/blocks/StatsGrid.astro';
 export type { FeedbackItem } from './components/blocks/KundenfeedbackSection.astro';
 export type { AEOItem } from './components/blocks/AEOSection.astro';
 export type { ReferenzItem } from './components/blocks/ReferenzenGrid.astro';
+export type { BentoItem } from './components/blocks/BentoGrid.astro';
 
 // ---------------------------------------------------------------------------
 // Layout component types

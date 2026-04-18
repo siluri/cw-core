@@ -119,6 +119,8 @@ Installiert in der Kundensite mit `pnpm add gsap lenis`.
 | `motion/SmoothScroll` | Lenis-Init (Desktop-only, touch-/reduced-motion-sicher). |
 | `motion/ScrollProgress` | Fixe Accent-Progress-Bar am oberen Viewport-Rand. |
 | `motion/CustomCursor` | Ersetzt den System-Cursor durch einen Follow-Circle (Desktop). |
+| `motion/MagneticButton` | CTA wird magnetisch zum Cursor gezogen (on-demand rAF, `(hover: hover)`-Check, harter Offset-Cap). |
+| `motion/TiltCard` | Karte bekommt subtiles 3D-Tilt auf Hover (rAF-Lerp während Hover, CSS-Transition nur beim Verlassen). |
 
 ### Hero mit Motion
 
@@ -162,6 +164,103 @@ import StaggerGroup from '@cw/core/components/motion/StaggerGroup.astro';
   <Card />
 </StaggerGroup>
 ```
+
+### Magnetic CTA + TiltCard (v0.6.0-alpha)
+
+Hover-Primitives für mehr wahrgenommene Interaktivität ohne Bundle-Bloat.
+Beide respektieren `prefers-reduced-motion` und laufen nur auf Hybrid- oder
+Desktop-Pointer-Geräten (`(hover: hover) and (pointer: fine)`).
+
+**MagneticButton** — zieht den Slot-Inhalt (meist ein CTA-Link) Richtung
+Cursor. Nur auf Primary-CTA einsetzen; mehrere magnetische Buttons auf einer
+Seite wirken wie Demo. Defaults sind konservativ: `strength 0.2`, harter
+Offset-Cap bei 18 px.
+
+```astro
+---
+import MagneticButton from '@cw/core/components/motion/MagneticButton.astro';
+---
+<MagneticButton>
+  <a href="/kontakt" class="btn-accent">Beratung anfragen</a>
+</MagneticButton>
+```
+
+Am Hero direkt per Flag aktivieren (wrappt automatisch nur den Primary-CTA):
+
+```astro
+<Hero ... motion={{ blob: true, textReveal: true, magnetic: true }} />
+```
+
+**TiltCard** — 3D-Tilt auf Hover. Defaults absichtlich subtil
+(`maxTilt: 6`, `scale: 1.01`). **Bevorzugt auf Pakete/Offer-Cards** —
+dort wo Entscheidungen fallen. Auf textlastigen Cards (Testimonials)
+entweder weglassen oder per Prop runterdimmen.
+
+```astro
+---
+import TiltCard from '@cw/core/components/motion/TiltCard.astro';
+---
+<TiltCard>
+  <div class="paket-card">…</div>
+</TiltCard>
+
+<!-- oder über Block-Prop: -->
+<PaketeSection items={siteData.packages} tilt={true} />
+<Testimonials items={siteData.testimonials} tilt={false} /> <!-- Default, bewusst aus -->
+```
+
+### BentoGrid (v0.6.0-alpha, Layout-Primitive)
+
+Asymmetrisches Grid für Feature-Kacheln. Kein Runtime-JS — reine
+CSS-Grid mit optionalem Column-/Row-Spanning. Ersetzt keine semantische
+Block-Komponente, sondern verdichtet Informations-Kacheln.
+
+**Layout-Dramaturgie (wichtig!):** BentoGrid wirkt nur bei harter
+Hierarchie. Eine dominante Kachel (`span: { cols: 2, rows: 2 }`), zwei
+semi-dominante mit voller Copy, Rest als Support. Ohne Hierarchie wird
+es zur Dribbble-Fassade — Content erst, Spans danach.
+
+```astro
+---
+import BentoGrid from '@cw/core/components/blocks/BentoGrid.astro';
+---
+<BentoGrid
+  heading="Warum Blitzsicht"
+  columns={4}
+  items={[
+    // 1 dominante Kachel
+    {
+      title: 'Fertig in 7 Werktagen',
+      eyebrow: 'Garantie',
+      description: 'Vom Briefing zum Go-Live. Source-Code gehört Ihnen.',
+      icon: '⚡',
+      accent: true,
+      span: { cols: 2, rows: 2 },
+    },
+    // 2 semi-dominante (volle Copy)
+    {
+      title: 'Ohne Cookie-Banner',
+      icon: '🍪',
+      description: 'Plausible Analytics: DSGVO-konform ohne Einwilligung.',
+    },
+    {
+      title: 'Kein Vendor-Lock-in',
+      icon: '🔓',
+      description: 'Astro + GitHub. Jederzeit zu anderem Dienstleister portierbar.',
+    },
+    // Support-Kacheln (kurz)
+    { title: 'Feste Pakete',           icon: '📦' },
+    { title: 'Echte Ansprechpartner',  icon: '👤' },
+    { title: 'DSGVO-konforme Forms',   icon: '✉️' },
+  ]}
+/>
+```
+
+Link-Kacheln rendern automatisch als `<a>` (A11y-konform, mit
+`:focus-visible`-Outline); Daten-Kacheln als `<article>`. Accent-Farbe
+nutzt `--color-accent` + optionales `--color-accent-foreground` für
+Kontrast-Override. Auf Mobile kollabiert das Grid auf eine Spalte; alle
+Spans werden automatisch neutralisiert.
 
 ### Brand-weit deaktivieren
 

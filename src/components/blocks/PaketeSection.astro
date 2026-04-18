@@ -12,8 +12,10 @@
  * - Price display: 2.25rem bold
  *
  * @example
- *   <PaketeSection items={siteData.packages} />
+ *   <PaketeSection items={siteData.packages} tilt={true} />
  */
+import TiltCard from '../motion/TiltCard.astro';
+
 export interface PaketeItem {
   /** Package name (large heading). */
   name: string;
@@ -46,6 +48,8 @@ interface Props {
   subheading?: string;
   /** Footnote rendered below the grid. */
   note?: string;
+  /** Wrap each card in a `<TiltCard>` for subtle 3D hover-tilt (default false). */
+  tilt?: boolean;
 }
 
 const {
@@ -54,6 +58,7 @@ const {
   heading = 'Transparente Preise. Keine Überraschungen.',
   subheading = 'Einmalige Einrichtung + monatliche Betreuung. Alle Preise netto zzgl. 19\u00a0% MwSt.',
   note = 'Alle Pakete: Source-Code gehört Ihnen · Hosting + Domain inklusive · DSGVO-konform ohne Cookie-Banner',
+  tilt = false,
 } = Astro.props;
 ---
 <section class="pakete-section">
@@ -66,51 +71,54 @@ const {
     )}
 
     <div class="pakete-grid">
-      {items.map((pkg) => (
-        <div class:list={['paket-card', pkg.highlighted && 'highlighted']}>
-          {pkg.highlighted && <span class="highlight-badge">Meistgewählt</span>}
-          <p class="paket-eyebrow">{pkg.subtitle}</p>
-          <h3 class="paket-name">{pkg.name}</h3>
+      {items.map((pkg) => {
+        const card = (
+          <div class:list={['paket-card', pkg.highlighted && 'highlighted']}>
+            {pkg.highlighted && <span class="highlight-badge">Meistgewählt</span>}
+            <p class="paket-eyebrow">{pkg.subtitle}</p>
+            <h3 class="paket-name">{pkg.name}</h3>
 
-          <div class="paket-pricing">
-            {pkg.priceSetup > 0 ? (
-              <>
-                <span class="price-amount">{pkg.priceSetup.toLocaleString('de-DE')}&thinsp;€</span>
-                <span class="price-label">einmalig</span>
-              </>
-            ) : (
-              <span class="price-amount price-anfrage">Auf Anfrage</span>
-            )}
-          </div>
-          {pkg.priceMonthly > 0 && (
-            <div class="paket-pricing-monthly">
-              <span>danach</span>
-              <strong>{pkg.priceMonthly}&thinsp;€</strong>
-              <span>/ Monat</span>
+            <div class="paket-pricing">
+              {pkg.priceSetup > 0 ? (
+                <>
+                  <span class="price-amount">{pkg.priceSetup.toLocaleString('de-DE')}&thinsp;€</span>
+                  <span class="price-label">einmalig</span>
+                </>
+              ) : (
+                <span class="price-amount price-anfrage">Auf Anfrage</span>
+              )}
             </div>
-          )}
+            {pkg.priceMonthly > 0 && (
+              <div class="paket-pricing-monthly">
+                <span>danach</span>
+                <strong>{pkg.priceMonthly}&thinsp;€</strong>
+                <span>/ Monat</span>
+              </div>
+            )}
 
-          {pkg.pages && <p class="paket-pages">{pkg.pages}</p>}
+            {pkg.pages && <p class="paket-pages">{pkg.pages}</p>}
 
-          <ul class="feature-list">
-            {pkg.features.map((f) => (
-              <li>
-                <svg class="check-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                {f}
-              </li>
-            ))}
-          </ul>
+            <ul class="feature-list">
+              {pkg.features.map((f) => (
+                <li>
+                  <svg class="check-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
 
-          <a
-            href={pkg.ctaHref ?? '/kontakt'}
-            class:list={['paket-cta', pkg.highlighted ? 'cta-primary' : 'cta-outline']}
-          >
-            {pkg.ctaLabel ?? `${pkg.name} anfragen`}
-          </a>
-        </div>
-      ))}
+            <a
+              href={pkg.ctaHref ?? '/kontakt'}
+              class:list={['paket-cta', pkg.highlighted ? 'cta-primary' : 'cta-outline']}
+            >
+              {pkg.ctaLabel ?? `${pkg.name} anfragen`}
+            </a>
+          </div>
+        );
+        return tilt ? <TiltCard>{card}</TiltCard> : card;
+      })}
     </div>
 
     {note && <p class="pakete-note">{note}</p>}

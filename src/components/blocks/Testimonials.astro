@@ -7,7 +7,13 @@
  *
  * @example
  *   <Testimonials items={siteData.testimonials} siteName={siteData.name} />
+ *
+ * Tilt caveat: on text-heavy testimonials, 3D tilt reduces readability.
+ * Default `tilt={false}`; only enable after visual check, and consider
+ * passing a smaller `maxTilt` to `<TiltCard>` via a custom wrapper.
  */
+import TiltCard from '../motion/TiltCard.astro';
+
 export interface Testimonial {
   /** Star rating (1-5). */
   stars: number;
@@ -30,6 +36,8 @@ interface Props {
   subheading?: string;
   /** Optional override for the Product itemprop name (defaults to `${siteName} Website-Service`). */
   productName?: string;
+  /** Wrap each testimonial in `<TiltCard>` (default false — text-heavy content suffers from tilt). */
+  tilt?: boolean;
 }
 
 const {
@@ -38,6 +46,7 @@ const {
   heading = 'Das sagen unsere Kunden',
   subheading = 'Bewertungen von Unternehmen aus der Region.',
   productName,
+  tilt = false,
 } = Astro.props;
 
 const itempropName = productName ?? `${siteName} Website-Service`;
@@ -52,20 +61,23 @@ const itempropName = productName ?? `${siteName} Website-Service`;
     </div>
 
     <div class="testimonials-grid">
-      {items.map((t) => (
-        <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
-          <div class="stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
-            <meta itemprop="ratingValue" content={String(t.stars)} />
-            <meta itemprop="bestRating" content="5" />
-            {'★'.repeat(t.stars)}
+      {items.map((t) => {
+        const card = (
+          <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+            <div class="stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+              <meta itemprop="ratingValue" content={String(t.stars)} />
+              <meta itemprop="bestRating" content="5" />
+              {'★'.repeat(t.stars)}
+            </div>
+            <blockquote itemprop="reviewBody">{t.text}</blockquote>
+            <div class="author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+              <strong itemprop="name">{t.name}</strong>
+              <span>{t.role}</span>
+            </div>
           </div>
-          <blockquote itemprop="reviewBody">{t.text}</blockquote>
-          <div class="author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-            <strong itemprop="name">{t.name}</strong>
-            <span>{t.role}</span>
-          </div>
-        </div>
-      ))}
+        );
+        return tilt ? <TiltCard>{card}</TiltCard> : card;
+      })}
     </div>
   </div>
 </section>
