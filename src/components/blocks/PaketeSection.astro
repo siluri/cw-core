@@ -50,6 +50,8 @@ interface Props {
   note?: string;
   /** Wrap each card in a `<TiltCard>` for 3D hover-tilt. Default true (opt-out with `tilt={false}`). */
   tilt?: boolean;
+  /** Single-card mode: centers the card, removes highlight negative margins. Use when showing only the highlighted package on a landing page. */
+  single?: boolean;
 }
 
 const {
@@ -59,6 +61,7 @@ const {
   subheading = 'Einmalige Einrichtung + monatliche Betreuung. Alle Preise netto zzgl. 19\u00a0% MwSt.',
   note = 'Alle Pakete: Source-Code gehört Ihnen · Hosting + Domain inklusive · DSGVO-konform ohne Cookie-Banner',
   tilt = true,
+  single = false,
 } = Astro.props;
 ---
 <section class="pakete-section">
@@ -70,7 +73,7 @@ const {
       </div>
     )}
 
-    <div class="pakete-grid">
+    <div class:list={['pakete-grid', single && 'pakete-grid--single']}>
       {items.map((pkg) => {
         const card = (
           <div class:list={['paket-card', pkg.highlighted && 'highlighted']}>
@@ -239,6 +242,16 @@ const {
   .cta-outline { background: transparent; color: var(--color-primary); border: 2px solid #e5e7eb; }
   .cta-outline:hover { border-color: var(--color-primary); background: var(--color-surface); }
   .pakete-note { text-align: center; margin-top: 2rem; font-size: 0.8125rem; color: var(--color-muted); }
+
+  .pakete-grid--single {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+    margin-inline: auto;
+  }
+  .pakete-grid--single .paket-card.highlighted {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
   @media (max-width: 900px) {
     .pakete-grid { grid-template-columns: 1fr; max-width: 480px; margin-inline: auto; }
