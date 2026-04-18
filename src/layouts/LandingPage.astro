@@ -29,6 +29,18 @@
 import BaseLayout, { type SchemaProps } from './BaseLayout.astro';
 import Header, { type NavItem } from '../components/layout/Header.astro';
 import Footer, { type FooterLink } from '../components/layout/Footer.astro';
+import SmoothScroll from '../components/motion/SmoothScroll.astro';
+import ScrollProgress from '../components/motion/ScrollProgress.astro';
+import CustomCursor from '../components/motion/CustomCursor.astro';
+
+export interface MotionLayerConfig {
+  /** Enable Lenis smooth-scroll globally. Requires `lenis` peer dep. */
+  smoothScroll?: boolean;
+  /** Fixed accent progress bar at the top of the viewport. */
+  progress?: boolean;
+  /** Replace the native cursor with a follow-circle (desktop only). */
+  cursor?: boolean;
+}
 
 export interface HeaderConfig {
   logoSrc?: string;
@@ -93,6 +105,8 @@ interface Props {
   header?: HeaderConfig;
   /** Footer config. Required because Footer requires `siteName`. */
   footer: FooterConfig;
+  /** Opt-in site-wide motion layer (smooth scroll, progress bar, custom cursor). */
+  motion?: MotionLayerConfig;
 }
 
 const {
@@ -112,6 +126,7 @@ const {
   schema,
   header = {},
   footer,
+  motion,
 } = Astro.props;
 ---
 <BaseLayout
@@ -130,6 +145,9 @@ const {
   plausibleEndpoint={plausibleEndpoint}
   schema={schema}
 >
+  {motion?.smoothScroll && <SmoothScroll />}
+  {motion?.progress && <ScrollProgress />}
+  {motion?.cursor && <CustomCursor />}
   <Header
     siteName={siteName}
     logoSrc={header.logoSrc}

@@ -90,6 +90,84 @@ Alle Blocks sind **prop-driven** — die Seite liest `siteData` und reicht die p
 | `StellenListe` | `stellen={siteData.karriere.stellen}` |
 | `BewerbungsForm` | `karriere={siteData.karriere}` |
 
+## Motion-System (ab v0.5.0-alpha)
+
+Opt-in Motion-Primitives für „Flashy Landing-Page"-Look. Alle Komponenten
+respektieren `prefers-reduced-motion: reduce` und schalten sich dort komplett ab.
+Desktop-only Features (Custom Cursor, Lenis Smooth-Scroll) sind auf Touch-Geräten
+automatisch deaktiviert.
+
+### Optionale Peer-Dependencies
+
+```
+gsap  >= 3.12   (optional — nur nötig wenn SmoothScroll mit ScrollTrigger-Sync genutzt wird)
+lenis >= 1.1    (optional — nur nötig für SmoothScroll)
+```
+
+Installiert in der Kundensite mit `pnpm add gsap lenis`.
+
+### Komponenten
+
+| Komponente | Zweck |
+|-----------|-------|
+| `motion/ScrollReveal` | Fadet/slidet Slot-Inhalt beim Scrollen ein (up/down/left/right/zoom/fade). |
+| `motion/StaggerGroup` | Reveal für Kindelemente mit konfigurierbarem Stagger. |
+| `motion/ParallaxImage` | Y-Parallax auf Bilder beim Scrollen (rAF-basiert, kein GSAP nötig). |
+| `motion/TextReveal` | Splittet Text in Wörter/Zeichen und blendet sie gestaffelt ein. |
+| `motion/CountUp` | Zahlen-Counter der beim Scroll in den Viewport eased. |
+| `motion/AnimatedBlob` | Organischer Mesh-Gradient-Hintergrund (CSS+SVG, kein WebGL). |
+| `motion/SmoothScroll` | Lenis-Init (Desktop-only, touch-/reduced-motion-sicher). |
+| `motion/ScrollProgress` | Fixe Accent-Progress-Bar am oberen Viewport-Rand. |
+| `motion/CustomCursor` | Ersetzt den System-Cursor durch einen Follow-Circle (Desktop). |
+
+### Hero mit Motion
+
+```astro
+<Hero
+  headline={siteData.hero.headline}
+  ...
+  motion={{ blob: true, textReveal: true, stagger: true, parallax: true }}
+/>
+{/* oder abkürzend: motion={true} aktiviert alle vier Effekte */}
+```
+
+### Global Motion-Layer via LandingPage
+
+```astro
+<LandingPage
+  {...landingBaseProps}
+  motion={{ smoothScroll: true, progress: true, cursor: true }}
+>
+  <Hero ... motion={true} />
+  <ScrollReveal direction="up"><LeistungenSection ... /></ScrollReveal>
+  <ScrollReveal direction="up"><USPSection ... /></ScrollReveal>
+  ...
+</LandingPage>
+```
+
+### Sektion-Reveals
+
+```astro
+---
+import ScrollReveal from '@cw/core/components/motion/ScrollReveal.astro';
+import StaggerGroup from '@cw/core/components/motion/StaggerGroup.astro';
+---
+<ScrollReveal direction="up" delay={0.1}>
+  <h2>Headline</h2>
+</ScrollReveal>
+
+<StaggerGroup direction="up" gap={0.1}>
+  <Card />
+  <Card />
+  <Card />
+</StaggerGroup>
+```
+
+### Brand-weit deaktivieren
+
+Einfach `motion={...}` / `motion={true}` weglassen — alle Heros / LandingPages
+rendern dann wie bisher (statisch). Kein Code-Change in `@cw/core` nötig.
+
 ## Usage
 
 ### Komponenten und Layouts importieren

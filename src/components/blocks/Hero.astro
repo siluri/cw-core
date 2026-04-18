@@ -23,6 +23,10 @@
  */
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import AnimatedBlob from '../motion/AnimatedBlob.astro';
+import TextReveal from '../motion/TextReveal.astro';
+import StaggerGroup from '../motion/StaggerGroup.astro';
+import ParallaxImage from '../motion/ParallaxImage.astro';
 
 export interface HeroCTA {
   label: string;
@@ -32,6 +36,17 @@ export interface HeroCTA {
 export interface HeroUSP {
   icon: string;
   title: string;
+}
+
+export interface HeroMotionConfig {
+  /** Animated mesh-gradient blob background. */
+  blob?: boolean;
+  /** Character/word reveal on headline. */
+  textReveal?: boolean;
+  /** Stagger USP chips. */
+  stagger?: boolean;
+  /** Parallax on hero image. */
+  parallax?: boolean;
 }
 
 interface Props {
@@ -53,6 +68,8 @@ interface Props {
   ctaSecondary?: HeroCTA;
   /** Optional USP chips shown below the CTAs. */
   usps?: readonly HeroUSP[];
+  /** Opt-in motion effects. Any omitted flags default to off (static hero). */
+  motion?: HeroMotionConfig | boolean;
 }
 
 const {
@@ -65,11 +82,17 @@ const {
   ctaPrimary = { label: 'Kostenlose Beratung anfragen', href: '/kontakt' },
   ctaSecondary,
   usps = [],
+  motion,
 } = Astro.props;
 
 const hasImage = !!image;
+const motionCfg: HeroMotionConfig =
+  motion === true
+    ? { blob: true, textReveal: true, stagger: true, parallax: true }
+    : (motion || {});
 ---
-<section class:list={['hero', hasImage && 'hero--split']}>
+<section class:list={['hero', hasImage && 'hero--split', motionCfg.blob && 'hero--with-blob']}>
+  {motionCfg.blob && <AnimatedBlob opacity={0.85} blur="100px" />}
   <div class="container">
     <div class="hero-content">
       <div class="hero-badge">
@@ -79,7 +102,13 @@ const hasImage = !!image;
         {badge}
       </div>
 
-      <h1 set:html={headline} />
+      {motionCfg.textReveal ? (
+        <TextReveal as="h1" split="word" delay={0.05}>
+          <Fragment set:html={headline} />
+        </TextReveal>
+      ) : (
+        <h1 set:html={headline} />
+      )}
 
       {subtext && <p class="hero-sub">{subtext}</p>}
 
@@ -99,30 +128,54 @@ const hasImage = !!image;
       </div>
 
       {usps.length > 0 && (
-        <div class="hero-usps">
-          {usps.map((usp) => (
-            <div class="hero-usp-item">
-              <span class="usp-icon" aria-hidden="true">{usp.icon}</span>
-              <span>{usp.title}</span>
-            </div>
-          ))}
-        </div>
+        motionCfg.stagger ? (
+          <StaggerGroup class="hero-usps" direction="up" gap={0.08} delay={0.2}>
+            {usps.map((usp: HeroUSP) => (
+              <div class="hero-usp-item">
+                <span class="usp-icon" aria-hidden="true">{usp.icon}</span>
+                <span>{usp.title}</span>
+              </div>
+            ))}
+          </StaggerGroup>
+        ) : (
+          <div class="hero-usps">
+            {usps.map((usp: HeroUSP) => (
+              <div class="hero-usp-item">
+                <span class="usp-icon" aria-hidden="true">{usp.icon}</span>
+                <span>{usp.title}</span>
+              </div>
+            ))}
+          </div>
+        )
       )}
     </div>
 
     {hasImage && typeof image !== 'string' && (
-      <div class="hero-image-wrap">
-        <Image
-          src={image!}
-          alt={imageAlt ?? siteName ?? ''}
-          widths={[400, 600, 800]}
-          sizes="(max-width: 767px) 100vw, 45vw"
-          loading="eager"
-          fetchpriority="high"
-          format="webp"
-          class="hero-img"
-        />
-      </div>
+      motionCfg.parallax ? (
+        <ParallaxImage class="hero-image-wrap" speed={0.2}>
+          <Image
+            src={image!}
+            alt={imageAlt ?? siteName ?? ''}
+            widths={[400, 600, 800]}
+            sizes="(max-width: 767px) 100vw, 45vw"
+            loading="eager"
+            format="webp"
+            class="hero-img"
+          />
+        </ParallaxImage>
+      ) : (
+        <div class="hero-image-wrap">
+          <Image
+            src={image!}
+            alt={imageAlt ?? siteName ?? ''}
+            widths={[400, 600, 800]}
+            sizes="(max-width: 767px) 100vw, 45vw"
+            loading="eager"
+            format="webp"
+            class="hero-img"
+          />
+        </div>
+      )
     )}
     {hasImage && typeof image === 'string' && (
       <div class="hero-image-wrap">
@@ -132,7 +185,6 @@ const hasImage = !!image;
           width={600}
           height={450}
           loading="eager"
-          fetchpriority="high"
           class="hero-img"
         />
       </div>
@@ -146,6 +198,16 @@ const hasImage = !!image;
     color: white;
     padding: 5rem 0 4rem;
   }
+  /* When AnimatedBlob is rendered as a child, the section must clip and
+     stack its own content above the absolute-positioned blob layer.
+     We drop the linear-gradient so the animated blobs become the
+     dominant background layer instead of fighting a static gradient. */
+  .hero--with-blob {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-primary, #1D1E3B);
+  }
+  .hero--with-blob .container { position: relative; z-index: 1; }
 
   /* Split-Layout (mit Bild) */
   .hero--split .container {

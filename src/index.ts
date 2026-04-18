@@ -6,6 +6,17 @@
  *   import BaseLayout from "@cw/core/layouts/BaseLayout.astro";
  *   import { submitForm } from "@cw/core/utils/forms/submit";
  *
+ * Motion primitives (opt-in, respect `prefers-reduced-motion`):
+ *   import AnimatedBlob    from "@cw/core/components/motion/AnimatedBlob.astro";
+ *   import ScrollReveal    from "@cw/core/components/motion/ScrollReveal.astro";
+ *   import StaggerGroup    from "@cw/core/components/motion/StaggerGroup.astro";
+ *   import ParallaxImage   from "@cw/core/components/motion/ParallaxImage.astro";
+ *   import CountUp         from "@cw/core/components/motion/CountUp.astro";
+ *   import TextReveal      from "@cw/core/components/motion/TextReveal.astro";
+ *   import SmoothScroll    from "@cw/core/components/motion/SmoothScroll.astro";  // needs `lenis` peer
+ *   import ScrollProgress  from "@cw/core/components/motion/ScrollProgress.astro";
+ *   import CustomCursor    from "@cw/core/components/motion/CustomCursor.astro";
+ *
  * This barrel re-exports the public **types** that component consumers need
  * for typed props (e.g. when wiring `site-data.ts` into a Hero or Footer).
  *
