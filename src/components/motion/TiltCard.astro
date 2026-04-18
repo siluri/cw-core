@@ -26,20 +26,20 @@
  *   </TiltCard>
  */
 interface Props {
-  /** Max tilt in degrees. Default 6 (subtle). */
+  /** Max tilt in degrees. Default 10 (noticeable but B2B-tauglich). */
   maxTilt?: number;
   /** 3D perspective distance in px. Default 1000. */
   perspective?: number;
-  /** Hover scale. Default 1.01. */
+  /** Hover scale. Default 1.03. */
   scale?: number;
   /** Extra class names on the wrapper. */
   class?: string;
 }
 
 const {
-  maxTilt = 6,
+  maxTilt = 10,
   perspective = 1000,
-  scale = 1.01,
+  scale = 1.03,
   class: className,
 } = Astro.props;
 
@@ -72,7 +72,7 @@ const cfg = JSON.stringify({ maxTilt, perspective, scale });
     if (!nodes.length) return;
 
     interface Cfg { maxTilt: number; perspective: number; scale: number; }
-    const DEFAULT_CFG: Cfg = { maxTilt: 6, perspective: 1000, scale: 1.01 };
+    const DEFAULT_CFG: Cfg = { maxTilt: 10, perspective: 1000, scale: 1.03 };
 
     nodes.forEach((el) => {
       const inner = el.querySelector<HTMLElement>('.motion-tilt-inner');

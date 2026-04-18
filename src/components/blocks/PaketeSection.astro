@@ -48,7 +48,7 @@ interface Props {
   subheading?: string;
   /** Footnote rendered below the grid. */
   note?: string;
-  /** Wrap each card in a `<TiltCard>` for subtle 3D hover-tilt (default false). */
+  /** Wrap each card in a `<TiltCard>` for 3D hover-tilt. Default true (opt-out with `tilt={false}`). */
   tilt?: boolean;
 }
 
@@ -58,7 +58,7 @@ const {
   heading = 'Transparente Preise. Keine Überraschungen.',
   subheading = 'Einmalige Einrichtung + monatliche Betreuung. Alle Preise netto zzgl. 19\u00a0% MwSt.',
   note = 'Alle Pakete: Source-Code gehört Ihnen · Hosting + Domain inklusive · DSGVO-konform ohne Cookie-Banner',
-  tilt = false,
+  tilt = true,
 } = Astro.props;
 ---
 <section class="pakete-section">

@@ -36,7 +36,7 @@ interface Props {
   subheading?: string;
   /** Optional override for the Product itemprop name (defaults to `${siteName} Website-Service`). */
   productName?: string;
-  /** Wrap each testimonial in `<TiltCard>` (default false — text-heavy content suffers from tilt). */
+  /** Wrap each testimonial in `<TiltCard>` with mild `maxTilt={4}` (default true). */
   tilt?: boolean;
 }
 
@@ -46,7 +46,7 @@ const {
   heading = 'Das sagen unsere Kunden',
   subheading = 'Bewertungen von Unternehmen aus der Region.',
   productName,
-  tilt = false,
+  tilt = true,
 } = Astro.props;
 
 const itempropName = productName ?? `${siteName} Website-Service`;
@@ -76,7 +76,7 @@ const itempropName = productName ?? `${siteName} Website-Service`;
             </div>
           </div>
         );
-        return tilt ? <TiltCard>{card}</TiltCard> : card;
+        return tilt ? <TiltCard maxTilt={4} scale={1.02}>{card}</TiltCard> : card;
       })}
     </div>
   </div>

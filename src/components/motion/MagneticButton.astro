@@ -22,20 +22,20 @@
  *   </MagneticButton>
  */
 interface Props {
-  /** Pull factor (0..0.35). Internally clamped. Default 0.2. */
+  /** Pull factor (0..0.35). Internally clamped. Default 0.35 (at cap, spürbar). */
   strength?: number;
-  /** Activation radius in px (cursor distance from element center). Default 120. */
+  /** Activation radius in px (cursor distance from element center). Default 140. */
   radius?: number;
-  /** Hard translation cap in px (independent of radius*strength). Default 18. */
+  /** Hard translation cap in px (independent of radius*strength). Default 28. */
   maxOffset?: number;
   /** Extra class names on the wrapper. */
   class?: string;
 }
 
 const {
-  strength = 0.2,
-  radius = 120,
-  maxOffset = 18,
+  strength = 0.35,
+  radius = 140,
+  maxOffset = 28,
   class: className,
 } = Astro.props;
 
@@ -76,7 +76,7 @@ const cfg = JSON.stringify({
       cx: number; cy: number;
     }
 
-    const DEFAULT_CFG: Cfg = { strength: 0.2, radius: 120, maxOffset: 18 };
+    const DEFAULT_CFG: Cfg = { strength: 0.35, radius: 140, maxOffset: 28 };
     const clamp = (v: number, lo: number, hi: number) =>
       v < lo ? lo : v > hi ? hi : v;
 
