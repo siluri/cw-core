@@ -6,11 +6,33 @@
  * No script loaded on page visit until this component is rendered —
  * DSGVO-clean (user initiates by visiting the page).
  *
+ * **Layout-Regel:** CalEmbed IMMER in eine eigene `<section>` mit full
+ * container-width. NIEMALS in Grid-Spalten, neben Form-Feldern oder in
+ * schmale Container — der cal.com-Kalender braucht ≥ 600 px Breite,
+ * sonst wird das Widget auf Desktop gequetscht und auf Tablet
+ * unbenutzbar.
+ *
+ * Gutes Pattern:
+ *   <section class="cal-section">
+ *     <div class="container">
+ *       <h2>Termin buchen</h2>
+ *       <CalEmbed calLink="..." minHeight="680px" />
+ *     </div>
+ *   </section>
+ *
+ * Schlechtes Pattern (ehemals auf blitzsicht.com/kontakt beobachtet —
+ * Widget gequetscht auf halbe Container-Breite):
+ *   <div class="grid-2-cols">
+ *     <ContactForm />
+ *     <CalEmbed ... />   <!-- nicht machen, nur 50 % Breite -->
+ *   </div>
+ *
  * @example
  *   <CalEmbed
  *     calLink="firma/30min"
  *     namespace="kontakt"
  *     brandColor="#1d1e3b"
+ *     minHeight="680px"
  *   />
  */
 interface Props {
@@ -33,7 +55,7 @@ const {
   namespace = 'booking',
   brandColor,
   layout = 'month_view',
-  minHeight = '500px',
+  minHeight = '600px',
   elementId = 'cal-embed',
 } = Astro.props;
 ---
