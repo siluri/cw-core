@@ -23,8 +23,15 @@ interface Props {
   headline?: string;
   /** Optional override for the subtext. */
   subtext?: string;
-  /** Optional team image. Accepts Astro ImageMetadata or a URL string. */
-  teamImage?: ImageMetadata | string;
+  /**
+   * Optional team image. MUST be an Astro `ImageMetadata` (optimierter Import),
+   * damit die responsive Bild-Pipeline greift.
+   *
+   * @example
+   *   import teamImage from '@/assets/images/team.webp';
+   *   <KarriereHero teamImage={teamImage} ... />
+   */
+  teamImage?: ImageMetadata;
   /** Alt text override for the team image. Defaults to `Team ${siteName}`. */
   teamImageAlt?: string;
   /** Badge text. Defaults to "Wir stellen ein". */
@@ -69,7 +76,7 @@ const hasImage = !!teamImage;
         <a href={ctaHref} class="btn-accent">{ctaLabel}</a>
       </div>
 
-      {hasImage && typeof teamImage !== 'string' && (
+      {hasImage && (
         <div class="hero-image-wrap">
           <Image
             src={teamImage!}
@@ -78,18 +85,6 @@ const hasImage = !!teamImage;
             height={400}
             loading="eager"
             format="webp"
-            class="hero-img"
-          />
-        </div>
-      )}
-      {hasImage && typeof teamImage === 'string' && (
-        <div class="hero-image-wrap">
-          <img
-            src={teamImage}
-            alt={resolvedAlt}
-            width={560}
-            height={400}
-            loading="eager"
             class="hero-img"
           />
         </div>

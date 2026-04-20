@@ -59,8 +59,17 @@ interface Props {
   headline: string;
   /** Sub-copy under the headline. */
   subtext?: string;
-  /** Optional hero image. If set, triggers split layout. Accepts Astro ImageMetadata or URL string. */
-  image?: ImageMetadata | string;
+  /**
+   * Optional hero image. If set, triggers split layout.
+   *
+   * MUST be an `ImageMetadata` (Astro-optimierter Import), NICHT ein String-Pfad —
+   * nur so greift Astros Bild-Pipeline (responsive `srcset`, Rekompression, moderne Formate).
+   *
+   * @example
+   *   import heroImage from '@/assets/images/hero.webp';
+   *   <Hero image={heroImage} ... />
+   */
+  image?: ImageMetadata;
   /** Alt text for the hero image. Falls back to `siteName`. */
   imageAlt?: string;
   /** Site name used as image alt fallback. */
@@ -165,7 +174,7 @@ const motionCfg: HeroMotionConfig =
       )}
     </div>
 
-    {hasImage && typeof image !== 'string' && (
+    {hasImage && (
       motionCfg.parallax ? (
         <ParallaxImage class="hero-image-wrap" speed={0.2}>
           <Image
@@ -193,18 +202,6 @@ const motionCfg: HeroMotionConfig =
           />
         </div>
       )
-    )}
-    {hasImage && typeof image === 'string' && (
-      <div class="hero-image-wrap">
-        <img
-          src={image}
-          alt={imageAlt ?? siteName ?? ''}
-          width={600}
-          height={450}
-          loading="eager"
-          class="hero-img"
-        />
-      </div>
     )}
   </div>
 </section>
