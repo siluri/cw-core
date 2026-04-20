@@ -32,6 +32,12 @@
  * behält seine `minHeight` — kein CLS (kein Layout-Sprung beim Laden).
  * Empfohlen für alle Seiten wo der Kalender below-the-fold ist.
  *
+ * **CSP-Voraussetzung:** Der Host-Site muss `https://app.cal.eu` in
+ * `script-src`, `connect-src` und `frame-src` erlauben, sonst blockt die
+ * CSP den Embed-Loader (leere weiße Box, Console-Error). Das cw-core
+ * `vercel.template.json` setzt das by default; bei älteren Customer-Repos
+ * muss `vercel.json` manuell ergänzt werden.
+ *
  * @example
  *   <CalEmbed
  *     calLink="firma/30min"

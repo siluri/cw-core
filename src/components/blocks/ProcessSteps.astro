@@ -64,16 +64,22 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
 )}
 
 <style>
-  .process-section { padding: 5rem 0; background: white; }
-  .section-header { text-align: center; margin-bottom: 3.5rem; }
-  .steps {
+  /* Mobile-first: immer 1 Spalte auf schmalen Screens, auch wenn
+     `columns={2|3|4}` gesetzt ist. Davor brach `.cols-4` (specificity 0,2,0)
+     die `@media (max-width: 500px) .steps { 1fr }` Override (specificity 0,1,0)
+     und zwang 4 Spalten bei 375 px. */
+  .process-section { padding: 3.5rem 0; background: white; }
+  .section-header { text-align: center; margin-bottom: 2.25rem; }
+
+  .steps,
+  .steps.cols-2,
+  .steps.cols-3,
+  .steps.cols-4 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
-  .steps.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .steps.cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .steps.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
   .step { position: relative; }
   .step-nr {
     font-size: 3rem;
@@ -93,7 +99,21 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
   .step-body h3 { font-size: 1.0625rem; margin-bottom: 0.5rem; }
   .step-body p { font-size: 0.9rem; color: var(--color-muted); line-height: 1.65; margin: 0; }
 
-  @media (max-width: 500px) {
-    .steps { grid-template-columns: 1fr; }
+  @media (min-width: 560px) {
+    .process-section { padding: 5rem 0; }
+    .section-header { margin-bottom: 3.5rem; }
+    .steps { gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .steps.cols-2,
+    .steps.cols-3,
+    .steps.cols-4 { gap: 1.5rem; grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 760px) {
+    .steps.cols-3,
+    .steps.cols-4 { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (min-width: 920px) {
+    .steps.cols-4 { grid-template-columns: repeat(4, 1fr); }
   }
 </style>
