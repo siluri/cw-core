@@ -284,41 +284,48 @@ const motionCfg: HeroMotionConfig =
   }
 
   /* Collage-Layout (mit `images`-Array, 2–3 Bilder) — diagonale Treppe, keine Rotation.
-     Das mittlere Bild ragt bewusst über die Container-Grenze nach links hinaus, damit
-     die Staffelung deutlich sichtbar wird (Referenz: User-Mockup 2026-04-21).
 
-     WICHTIG: `.hero-collage-item` + `.hero-collage-frame`/`-img` klassen landen auf
+     WICHTIG 1: `.hero-collage-item` + `.hero-collage-frame`/`-img` klassen landen auf
      TiltCard-Wrappern bzw. astro:assets `<Image>` Komponenten — beide haben eigene
-     Astro-Scopes. Regeln werden daher als `.hero-collage :global(child)` geschrieben:
-     der scoped `.hero-collage`-Parent bekommt die data-cid-Binding, der :global()-
-     Child bleibt unscoped. Dieses Pattern funktioniert auch in @media — ohne
-     scoped-Parent strippt Astros Compiler die @media-Wrapper (v0.7.3-Bug). */
+     Astro-Scopes. Regeln werden daher als `.hero-collage :global(child)` geschrieben.
+
+     WICHTIG 2: TiltCard's `.motion-tilt` CSS setzt `height: 100%` auf seinen Wrapper.
+     Die `.hero-collage-item` class liegt genau auf dem `.motion-tilt` div — ohne
+     Override wäre jeder Collage-Item full-height des Containers, wodurch item--1
+     und item--3 komplett übereinanderliegen und eines vom anderen verdeckt wird
+     (v0.7.4-Bug). Deshalb `height: auto` auf items — so nehmen sie content-height
+     (= frame mit img mit aspect-ratio 4/3).
+
+     Das aspect-ratio auf `.hero-collage` gibt dem Container eine definite Höhe
+     auch im Grid-Cell mit `align-items: center` — ohne das hätte der Container
+     height 0 (absolute-positionierte Kinder geben keinen Layout-Space). */
   .hero--collage :global(.hero-image-wrap) { display: none; }
   .hero--collage .container { overflow: visible; }
   .hero-collage {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 4.2;
+    aspect-ratio: 5 / 4;
     overflow: visible;
   }
   .hero-collage :global(.hero-collage-item) {
     position: absolute;
+    height: auto;
   }
   .hero-collage :global(.hero-collage-item--1) {
     top: 0;
     right: 0;
-    width: 72%;
+    width: 68%;
   }
   .hero-collage :global(.hero-collage-item--2) {
-    top: 26%;
-    left: -18%;
-    width: 80%;
+    top: 25%;
+    left: 6%;
+    width: 68%;
     z-index: 2;
   }
   .hero-collage :global(.hero-collage-item--3) {
     bottom: 0;
-    right: 4%;
-    width: 72%;
+    right: 0;
+    width: 68%;
   }
   .hero-collage :global(.hero-collage-frame) {
     border-radius: 1rem;
@@ -392,21 +399,19 @@ const motionCfg: HeroMotionConfig =
     .hero-image-wrap { order: -1; max-height: 280px; }
     .hero-img { height: 280px; }
 
-    /* Collage stapelt auf schmalen Viewports ohne Rotation/Überlappung.
-       Scoped-Parent `.hero-collage` MUSS dran, damit Astros Compiler die @media
-       nicht strippt (siehe Hauptblock). */
+    /* Collage auf schmalen Viewports: nur das erste Bild zeigen (User-Wunsch
+       2026-04-21). Scoped-Parent `.hero-collage` MUSS dran, damit Astros Compiler
+       die @media nicht strippt (siehe Hauptblock). */
     .hero--collage .hero-collage {
       position: static;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
       aspect-ratio: auto;
       order: -1;
     }
-    .hero-collage :global(.hero-collage-item),
-    .hero-collage :global(.hero-collage-item--1),
     .hero-collage :global(.hero-collage-item--2),
     .hero-collage :global(.hero-collage-item--3) {
+      display: none;
+    }
+    .hero-collage :global(.hero-collage-item--1) {
       position: static;
       width: 100%;
       transform: none;
