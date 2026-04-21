@@ -283,28 +283,28 @@ const motionCfg: HeroMotionConfig =
     object-fit: cover;
   }
 
-  /* Collage-Layout (mit `images`-Array, 2–3 Bilder) — diagonale Treppe, keine Rotation.
+  /* Bento-Layout (mit `images`-Array, 3 Bilder) — ein großes Hauptbild + zwei
+     überlappende Inset-Cards. Ersetzt das Collage-Konzept aus v0.7.0-0.7.5,
+     das im 45%-Grid-Slot visuell nicht zündete (3 gleich große Bilder ohne
+     Hierarchie stecken zu eng zusammen).
 
-     WICHTIG 1: `.hero-collage-item` + `.hero-collage-frame`/`-img` klassen landen auf
-     TiltCard-Wrappern bzw. astro:assets `<Image>` Komponenten — beide haben eigene
-     Astro-Scopes. Regeln werden daher als `.hero-collage :global(child)` geschrieben.
+     Positions-Konzept:
+     - `--1` (Big Hero): Grund-Layer oben, volle Collage-Breite
+     - `--2` (Medium Inset): rechts-unten, 50%, überlappt --1
+     - `--3` (Small Inset): mitte-unten, 42%, überlappt --2 von links
 
-     WICHTIG 2: TiltCard's `.motion-tilt` CSS setzt `height: 100%` auf seinen Wrapper.
-     Die `.hero-collage-item` class liegt genau auf dem `.motion-tilt` div — ohne
-     Override wäre jeder Collage-Item full-height des Containers, wodurch item--1
-     und item--3 komplett übereinanderliegen und eines vom anderen verdeckt wird
-     (v0.7.4-Bug). Deshalb `height: auto` auf items — so nehmen sie content-height
-     (= frame mit img mit aspect-ratio 4/3).
-
-     Das aspect-ratio auf `.hero-collage` gibt dem Container eine definite Höhe
-     auch im Grid-Cell mit `align-items: center` — ohne das hätte der Container
-     height 0 (absolute-positionierte Kinder geben keinen Layout-Space). */
+     Scoping-Patterns (gereift über 5 Versionen):
+     1. `.hero-collage :global(child)` — scoped Parent bindet die data-cid,
+        :global()-Child umgeht TiltCard's eigenen Scope. Verhindert auch das
+        @media-Stripping in Astros Compiler (v0.7.4-Fix).
+     2. `height: auto` auf Items überschreibt TiltCard's internes `.motion-tilt
+        { height: 100% }`, sodass Items Content-Höhe annehmen (v0.7.5-Fix). */
   .hero--collage :global(.hero-image-wrap) { display: none; }
   .hero--collage .container { overflow: visible; }
   .hero-collage {
     position: relative;
     width: 100%;
-    aspect-ratio: 5 / 4;
+    aspect-ratio: 1 / 1;
     overflow: visible;
   }
   .hero-collage :global(.hero-collage-item) {
@@ -314,25 +314,26 @@ const motionCfg: HeroMotionConfig =
   .hero-collage :global(.hero-collage-item--1) {
     top: 0;
     right: 0;
-    width: 68%;
+    width: 100%;
   }
   .hero-collage :global(.hero-collage-item--2) {
-    top: 25%;
-    left: 6%;
-    width: 68%;
+    bottom: 0;
+    right: 0;
+    width: 50%;
     z-index: 2;
   }
   .hero-collage :global(.hero-collage-item--3) {
-    bottom: 0;
-    right: 0;
-    width: 68%;
+    bottom: 8%;
+    left: 12%;
+    width: 42%;
+    z-index: 3;
   }
   .hero-collage :global(.hero-collage-frame) {
     border-radius: 1rem;
     overflow: hidden;
     background: white;
-    border: 1px solid rgba(255,255,255,0.6);
-    box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+    border: 2px solid white;
+    box-shadow: 0 14px 36px rgba(0,0,0,0.32);
   }
   .hero-collage :global(.hero-collage-img) {
     display: block;
