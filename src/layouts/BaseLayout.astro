@@ -219,6 +219,9 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
         track('Phone Click', { number: href.replace('tel:', '') });
       } else if (href.startsWith('mailto:')) {
         track('Email Click', { address: href.replace('mailto:', '').split('?')[0] });
+      } else if (href.endsWith('.pdf') || href.includes('.pdf?')) {
+        const filename = href.split('/').pop()?.split('?')[0] ?? href;
+        track('File Download', { filename });
       } else if (href.startsWith('http') && !href.includes(window.location.hostname)) {
         try {
           track('Outbound Click', { url: new URL(href).origin });

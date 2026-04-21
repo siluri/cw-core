@@ -175,10 +175,17 @@ const {
 </style>
 
 <script>
+  import { track } from '@/utils/analytics/track';
   const toggle = document.getElementById('nav-toggle');
   const nav = document.getElementById('main-nav');
   toggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(open));
+    if (open) track('Mobile Nav Open');
+  });
+  document.querySelectorAll<HTMLAnchorElement>('#main-nav a').forEach((link) => {
+    link.addEventListener('click', () => {
+      track('Nav Click', { label: link.textContent?.trim() ?? '', href: link.getAttribute('href') ?? '' });
+    });
   });
 </script>
