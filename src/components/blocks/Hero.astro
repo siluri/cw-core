@@ -288,10 +288,11 @@ const motionCfg: HeroMotionConfig =
      die Staffelung deutlich sichtbar wird (Referenz: User-Mockup 2026-04-21).
 
      WICHTIG: `.hero-collage-item` + `.hero-collage-frame`/`-img` klassen landen auf
-     TiltCard-Wrappern (separate Astro-Komponente, eigener scope). Deshalb MÜSSEN die
-     Regeln :global() sein, sonst greift Astros scoped-CSS die falsche data-cid und
-     die Positioning-Werte werden gar nicht angewendet — die Bilder stapeln dann
-     vertikal im Normal-Flow (genau der Bug der v0.7.0 und v0.7.1 unsichtbar ließ). */
+     TiltCard-Wrappern bzw. astro:assets `<Image>` Komponenten — beide haben eigene
+     Astro-Scopes. Regeln werden daher als `.hero-collage :global(child)` geschrieben:
+     der scoped `.hero-collage`-Parent bekommt die data-cid-Binding, der :global()-
+     Child bleibt unscoped. Dieses Pattern funktioniert auch in @media — ohne
+     scoped-Parent strippt Astros Compiler die @media-Wrapper (v0.7.3-Bug). */
   .hero--collage :global(.hero-image-wrap) { display: none; }
   .hero--collage .container { overflow: visible; }
   .hero-collage {
@@ -300,33 +301,33 @@ const motionCfg: HeroMotionConfig =
     aspect-ratio: 4 / 4.2;
     overflow: visible;
   }
-  :global(.hero-collage-item) {
+  .hero-collage :global(.hero-collage-item) {
     position: absolute;
   }
-  :global(.hero-collage-item--1) {
+  .hero-collage :global(.hero-collage-item--1) {
     top: 0;
     right: 0;
     width: 72%;
   }
-  :global(.hero-collage-item--2) {
+  .hero-collage :global(.hero-collage-item--2) {
     top: 26%;
     left: -18%;
     width: 80%;
     z-index: 2;
   }
-  :global(.hero-collage-item--3) {
+  .hero-collage :global(.hero-collage-item--3) {
     bottom: 0;
     right: 4%;
     width: 72%;
   }
-  :global(.hero-collage-frame) {
+  .hero-collage :global(.hero-collage-frame) {
     border-radius: 1rem;
     overflow: hidden;
     background: white;
     border: 1px solid rgba(255,255,255,0.6);
     box-shadow: 0 14px 36px rgba(0,0,0,0.28);
   }
-  :global(.hero-collage-img) {
+  .hero-collage :global(.hero-collage-img) {
     display: block;
     width: 100%;
     height: auto;
@@ -392,7 +393,8 @@ const motionCfg: HeroMotionConfig =
     .hero-img { height: 280px; }
 
     /* Collage stapelt auf schmalen Viewports ohne Rotation/Überlappung.
-       Items sind :global() weil sie auf TiltCard-Wrappern liegen (siehe Hauptblock). */
+       Scoped-Parent `.hero-collage` MUSS dran, damit Astros Compiler die @media
+       nicht strippt (siehe Hauptblock). */
     .hero--collage .hero-collage {
       position: static;
       display: flex;
@@ -401,10 +403,10 @@ const motionCfg: HeroMotionConfig =
       aspect-ratio: auto;
       order: -1;
     }
-    :global(.hero-collage-item),
-    :global(.hero-collage-item--1),
-    :global(.hero-collage-item--2),
-    :global(.hero-collage-item--3) {
+    .hero-collage :global(.hero-collage-item),
+    .hero-collage :global(.hero-collage-item--1),
+    .hero-collage :global(.hero-collage-item--2),
+    .hero-collage :global(.hero-collage-item--3) {
       position: static;
       width: 100%;
       transform: none;
