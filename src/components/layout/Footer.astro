@@ -1,4 +1,7 @@
 ---
+import cwCorePkg from '../../../package.json';
+const cwCoreVersion = cwCorePkg.version;
+
 /**
  * @cw/core – Footer.astro
  *
@@ -148,6 +151,10 @@ const copyrightOwner = owner ?? siteName;
   </div>
 </footer>
 
+<script is:inline define:vars={{ cwCoreVersion }}>
+  console.log('%c@cw/core v' + cwCoreVersion, 'color:#EF7612;font-weight:bold;font-size:12px');
+</script>
+
 <style>
   footer {
     background: var(--color-footer-bg, var(--color-primary-dark, #111));
@@ -187,7 +194,7 @@ const copyrightOwner = owner ?? siteName;
     max-width: 28ch;
   }
   .contact-link {
-    display: inline-block;
+    display: block;
     margin-top: 0.5rem;
     color: var(--color-accent);
     text-decoration: none;
