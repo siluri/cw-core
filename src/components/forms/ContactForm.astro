@@ -186,12 +186,18 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
     const formType = form.dataset.formType ?? 'contact';
 
     let formStartTracked = false;
+    let formSubmitted = false;
     form.addEventListener('input', () => {
       if (!formStartTracked) {
         formStartTracked = true;
         track('Form Start', { type: formType });
       }
     }, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' && formStartTracked && !formSubmitted) {
+        track('Form Abandoned', { type: formType });
+      }
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -224,6 +230,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         if (json.success || json.ok) {
           (form as HTMLElement).hidden = true;
           if (success) success.hidden = false;
+          formSubmitted = true;
           track('Form Submit', { type: formType, status: 'success' });
         } else {
           throw new Error(json.message ?? 'Unknown error');

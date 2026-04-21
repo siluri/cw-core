@@ -244,5 +244,10 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
       }
     }
     document.addEventListener('scroll', onScroll, { passive: true });
+
+    const timeMilestones: Array<[number, string]> = [[30000, '30s'], [120000, '2min'], [300000, '5min']];
+    timeMilestones.forEach(([ms, label]) => {
+      setTimeout(() => track('Time on Page', { duration: label }), ms);
+    });
   </script>
 </html>
