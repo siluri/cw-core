@@ -11,7 +11,7 @@
     "./components/*": "./src/components/*",
     "./styles/*": "./src/styles/*",
     "./templates/*": "./src/templates/*",
-    "./utils/*": "./src/utils/*",
+    "./utils/*": "./src/utils/*.ts",
     "./types/*": "./src/types/*",
     "./scripts/*": "./scripts/*"
   },
