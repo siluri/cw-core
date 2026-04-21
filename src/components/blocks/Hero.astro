@@ -304,29 +304,33 @@ const motionCfg: HeroMotionConfig =
   .hero-collage {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     overflow: visible;
   }
   .hero-collage :global(.hero-collage-item) {
     position: absolute;
     height: auto;
   }
+  /* Symmetrisches Triangle-Bento: Hero oben zentriert, zwei gleich große
+     Inset-Cards unten gespiegelt (gleiche Breite, gleiche Höhe, gleicher
+     Kantenabstand). Vertikale Symmetrie-Achse durch die Container-Mitte. */
   .hero-collage :global(.hero-collage-item--1) {
     top: 0;
-    right: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
   }
   .hero-collage :global(.hero-collage-item--2) {
     bottom: 0;
     right: 0;
-    width: 50%;
+    width: 45%;
     z-index: 2;
   }
   .hero-collage :global(.hero-collage-item--3) {
-    bottom: 8%;
-    left: 12%;
-    width: 42%;
-    z-index: 3;
+    bottom: 0;
+    left: 0;
+    width: 45%;
+    z-index: 2;
   }
   .hero-collage :global(.hero-collage-frame) {
     border-radius: 1rem;
