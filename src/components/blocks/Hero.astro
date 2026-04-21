@@ -247,6 +247,15 @@ const motionCfg: HeroMotionConfig =
   </div>
 </section>
 
+<script>
+  import { track } from '@/utils/analytics/track';
+  document.querySelectorAll<HTMLAnchorElement>('.hero-cta a').forEach((link) => {
+    link.addEventListener('click', () => {
+      track('Hero CTA Click', { label: link.textContent?.trim() ?? '' });
+    });
+  });
+</script>
+
 <style>
   .hero {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark, #0f3460) 100%);

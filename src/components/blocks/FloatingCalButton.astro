@@ -37,6 +37,13 @@ const {
 </a>
 )}
 
+<script>
+  import { track } from '@/utils/analytics/track';
+  document.querySelector('.floating-cal')?.addEventListener('click', () => {
+    track('Cal Button Click');
+  });
+</script>
+
 <style>
   .floating-cal {
     position: fixed;

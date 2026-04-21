@@ -129,6 +129,7 @@ const {
     btn.addEventListener('click', function onTrigger() {
       if (loaded) return;
       loaded = true;
+      window.plausible && window.plausible('Calendar Opened');
 
       container.style.minHeight = fullHeight;
 
@@ -158,6 +159,9 @@ const {
         config: { layout: layout, useSlotsViewOnSmallScreen: "true" },
         calLink: calLink,
       });
+      Cal.ns[ns]("on", { action: "bookingSuccessful", callback: function() {
+        window.plausible && window.plausible("Booking Completed", { props: { calendar: calLink } });
+      }});
       if (brand) {
         Cal.ns[ns]("ui", {
           cssVarsPerTheme: { light: { "cal-brand": brand } },
@@ -209,6 +213,9 @@ const {
       config: { layout: layout, useSlotsViewOnSmallScreen: "true" },
       calLink: calLink,
     });
+    Cal.ns[ns]("on", { action: "bookingSuccessful", callback: function() {
+      window.plausible && window.plausible("Booking Completed", { props: { calendar: calLink } });
+    }});
     if (brand) {
       Cal.ns[ns]("ui", {
         cssVarsPerTheme: { light: { "cal-brand": brand } },

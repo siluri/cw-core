@@ -65,6 +65,18 @@ const {
 </section>
 )}
 
+<script>
+  import { track } from '@/utils/analytics/track';
+  document.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach((details) => {
+    details.addEventListener('toggle', () => {
+      if (details.open) {
+        const q = details.querySelector('summary span')?.textContent?.slice(0, 60) ?? '';
+        track('FAQ Open', { question: q });
+      }
+    });
+  });
+</script>
+
 <style>
   .faq-section { padding: 5rem 0; background: white; }
   .section-header { text-align: center; margin-bottom: 3rem; }

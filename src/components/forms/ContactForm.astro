@@ -64,6 +64,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
       method="POST"
       data-web3form
       data-submit-url={submitUrl}
+      data-form-type={formType}
     >
       {useWeb3Forms && (
         <>
@@ -170,6 +171,8 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
 )}
 
 <script>
+  import { track } from '@/utils/analytics/track';
+
   document.querySelectorAll('form[data-web3form]').forEach((formEl) => {
     const form = formEl as HTMLFormElement;
     const wrap = form.closest('.contact-form-wrap') as HTMLElement | null;
@@ -180,6 +183,15 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
     const btnLabel = form.querySelector('.btn-label') as HTMLElement | null;
     const btnLoading = form.querySelector('.btn-loading') as HTMLElement | null;
     const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    const formType = form.dataset.formType ?? 'contact';
+
+    let formStartTracked = false;
+    form.addEventListener('input', () => {
+      if (!formStartTracked) {
+        formStartTracked = true;
+        track('Form Start', { type: formType });
+      }
+    }, { passive: true });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -212,6 +224,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         if (json.success || json.ok) {
           (form as HTMLElement).hidden = true;
           if (success) success.hidden = false;
+          track('Form Submit', { type: formType, status: 'success' });
         } else {
           throw new Error(json.message ?? 'Unknown error');
         }
@@ -221,6 +234,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         if (btnLoading) btnLoading.hidden = true;
         if (error) error.hidden = false;
         delete form.dataset.submitting;
+        track('Form Submit', { type: formType, status: 'error' });
       }
     });
   });

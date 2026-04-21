@@ -156,16 +156,18 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
     <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Plausible Analytics (cookie-frei, DSGVO-konform) -->
+    <!-- Queue-Shim immer vorhanden: window.plausible() wirft keinen Fehler wenn kein Script geladen -->
+    <script is:inline>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};</script>
     {plausibleScript && (
       <>
         {!plausibleEndpoint && <link rel="preconnect" href={plausibleHost} />}
         <script is:inline async src={plausibleScript}></script>
-        <script is:inline define:vars={{ endpoint: plausibleEndpoint }}>
-          // @ts-nocheck
-          window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};
-          window.plausible.init=window.plausible.init||function(i){window.plausible.o=i||{}};
-          window.plausible.init(endpoint ? { endpoint: endpoint } : undefined);
-        </script>
+        {plausibleEndpoint && (
+          <script is:inline define:vars={{ endpoint: plausibleEndpoint }}>
+            window.plausible.init=window.plausible.init||function(i){window.plausible.o=i||{}};
+            window.plausible.init({ endpoint: endpoint });
+          </script>
+        )}
       </>
     )}
 
@@ -207,4 +209,17 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
   <body>
     <slot />
   </body>
+  <script>
+    import { track } from '@/utils/analytics/track';
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href') ?? '';
+      if (href.startsWith('tel:')) {
+        track('Phone Click', { number: href.replace('tel:', '') });
+      } else if (href.startsWith('mailto:')) {
+        track('Email Click', { address: href.replace('mailto:', '').split('?')[0] });
+      }
+    });
+  </script>
 </html>
