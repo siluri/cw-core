@@ -11,6 +11,7 @@
     "./components/*": "./src/components/*",
     "./styles/*": "./src/styles/*",
     "./templates/*": "./src/templates/*",
+    "./utils/forms/handle-submission": "./src/utils/forms/handle-submission.js",
     "./utils/*": "./src/utils/*.ts",
     "./types/*": "./src/types/*",
     "./scripts/*": "./scripts/*"
