@@ -219,7 +219,27 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
         track('Phone Click', { number: href.replace('tel:', '') });
       } else if (href.startsWith('mailto:')) {
         track('Email Click', { address: href.replace('mailto:', '').split('?')[0] });
+      } else if (href.startsWith('http') && !href.includes(window.location.hostname)) {
+        try {
+          track('Outbound Click', { url: new URL(href).origin });
+        } catch {}
       }
     });
+
+    const depths = new Set<string>();
+    const milestones = [25, 50, 75, 100];
+    function onScroll() {
+      const el = document.documentElement;
+      const scrolled = el.scrollTop + el.clientHeight;
+      const total = el.scrollHeight;
+      const pct = Math.round((scrolled / total) * 100);
+      for (const m of milestones) {
+        if (pct >= m && !depths.has(String(m))) {
+          depths.add(String(m));
+          track('Scroll Depth', { depth: `${m}%` });
+        }
+      }
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
   </script>
 </html>

@@ -62,3 +62,8 @@ const {
     background: var(--color-accent-hover, var(--color-accent));
   }
 </style>
+
+<script>
+  import { track } from '@/utils/analytics/track';
+  track('404 Error', { path: window.location.pathname });
+</script>

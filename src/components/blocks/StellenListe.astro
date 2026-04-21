@@ -183,3 +183,16 @@ const datePosted = new Date().toISOString().split('T')[0];
   .initiativ-box p { font-size: 1rem; color: var(--color-muted); line-height: 1.7; margin: 0; }
   .initiativ-box a:not(.btn-accent) { color: var(--color-accent-text); font-weight: 600; }
 </style>
+
+<script>
+  import { track } from '@/utils/analytics/track';
+  document.querySelectorAll<HTMLAnchorElement>('.stelle-cta').forEach((link) => {
+    link.addEventListener('click', () => {
+      const position = link.closest('.stelle-card')?.querySelector('h3')?.textContent?.trim() ?? '';
+      track('Job Application Click', { position, type: 'apply' });
+    });
+  });
+  document.querySelector<HTMLAnchorElement>('.initiativ-box .btn-accent')?.addEventListener('click', () => {
+    track('Job Application Click', { position: 'Initiativbewerbung', type: 'initiative' });
+  });
+</script>
