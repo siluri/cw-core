@@ -66,7 +66,7 @@ const {
 )}
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
   document.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach((details) => {
     details.addEventListener('toggle', () => {
       if (details.open) {

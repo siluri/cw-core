@@ -210,7 +210,7 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
     <slot />
   </body>
   <script>
-    import { track } from '@/utils/analytics/track';
+    import { track } from '../utils/analytics/track';
     document.addEventListener('click', (e) => {
       const a = (e.target as Element).closest('a');
       if (!a) return;

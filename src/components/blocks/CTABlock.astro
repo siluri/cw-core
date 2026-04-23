@@ -57,7 +57,7 @@ const {
 </section>
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
   document.querySelectorAll<HTMLAnchorElement>('[data-track-cta]').forEach((link) => {
     link.addEventListener('click', () => {
       track('CTA Click', { label: link.dataset.trackCta ?? '' });

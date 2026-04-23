@@ -182,7 +182,7 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
 )}
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
 
   document.querySelectorAll('form[data-web3form]').forEach((formEl) => {
     const form = formEl as HTMLFormElement;

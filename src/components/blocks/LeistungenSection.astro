@@ -140,7 +140,7 @@ const {
 </style>
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
   document.querySelectorAll<HTMLAnchorElement>('.leistung-link').forEach((link) => {
     link.addEventListener('click', () => {
       const service = link.closest('.leistung-card')?.querySelector('h3')?.textContent?.trim() ?? '';

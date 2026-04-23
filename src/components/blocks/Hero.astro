@@ -248,7 +248,7 @@ const motionCfg: HeroMotionConfig =
 </section>
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
   document.querySelectorAll<HTMLAnchorElement>('.hero-cta a').forEach((link) => {
     link.addEventListener('click', () => {
       track('Hero CTA Click', { label: link.textContent?.trim() ?? '' });

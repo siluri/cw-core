@@ -185,7 +185,7 @@ const datePosted = new Date().toISOString().split('T')[0];
 </style>
 
 <script>
-  import { track } from '@/utils/analytics/track';
+  import { track } from '../../utils/analytics/track';
   document.querySelectorAll<HTMLAnchorElement>('.stelle-cta').forEach((link) => {
     link.addEventListener('click', () => {
       const position = link.closest('.stelle-card')?.querySelector('h3')?.textContent?.trim() ?? '';
