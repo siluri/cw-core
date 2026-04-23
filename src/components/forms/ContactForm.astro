@@ -40,6 +40,8 @@ interface Props {
   fallbackEmail?: string;
   /** Custom submit endpoint. When set, Web3Forms is bypassed. */
   actionUrl?: string;
+  /** Cloudflare Turnstile site key. When set, renders the CAPTCHA widget. */
+  turnstileSiteKey?: string;
 }
 
 const {
@@ -49,6 +51,7 @@ const {
   formType = 'contact',
   fallbackEmail = '',
   actionUrl,
+  turnstileSiteKey,
 } = Astro.props;
 
 const useWeb3Forms = !actionUrl;
@@ -136,6 +139,10 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
         </>
       )}
 
+      {turnstileSiteKey && (
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+      )}
+
       <div class="form-submit">
         <button type="submit" class="btn-accent">
           <span class="btn-label">Absenden</span>
@@ -168,6 +175,10 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
     <p>Kontaktieren Sie uns direkt per E-Mail:</p>
     {fallbackEmail && <a href={`mailto:${fallbackEmail}`} class="btn-accent">{fallbackEmail}</a>}
   </div>
+)}
+
+{turnstileSiteKey && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 )}
 
 <script>

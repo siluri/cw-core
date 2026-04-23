@@ -27,6 +27,8 @@ export interface FormSubmissionConfig {
   senderEmail?: string;
   /** Site name for the email subject line. */
   siteName?: string;
+  /** Cloudflare Turnstile secret key. When set, validates the CAPTCHA token. */
+  turnstileSecretKey?: string;
 }
 
 export interface FormSubmissionResult {
@@ -60,12 +62,31 @@ export async function handleFormSubmission(
     resendApiKey,
     senderEmail = 'noreply@blitzsicht.com',
     siteName = '',
+    turnstileSecretKey,
   } = config;
 
   // --- Honeypot check ---
   if (data.botcheck) {
     // Bots fill hidden fields. Silently accept to not reveal detection.
     return { ok: true };
+  }
+
+  // --- Turnstile verification ---
+  if (turnstileSecretKey) {
+    const token = typeof data['cf-turnstile-response'] === 'string'
+      ? data['cf-turnstile-response'] : '';
+    if (!token) {
+      return { ok: false, error: 'Bot-Schutz-Prüfung fehlt.' };
+    }
+    const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: turnstileSecretKey, response: token }),
+    });
+    const cfData = await cfRes.json() as { success: boolean };
+    if (!cfData.success) {
+      return { ok: false, error: 'Bot-Schutz-Prüfung fehlgeschlagen.' };
+    }
   }
 
   // --- Validation ---
