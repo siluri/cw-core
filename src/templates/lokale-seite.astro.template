@@ -45,7 +45,10 @@ import PageHero from '@cw/core/components/blocks/PageHero.astro';
 import FAQ from '@cw/core/components/blocks/FAQ.astro';
 import AEOSection from '@cw/core/components/blocks/AEOSection.astro';
 import VergleichsTabelle from '@cw/core/components/blocks/VergleichsTabelle.astro';
+import Testimonials from '@cw/core/components/blocks/Testimonials.astro';
+import TechExcellence from '@cw/core/components/blocks/TechExcellence.astro';
 import CTABlock from '@cw/core/components/blocks/CTABlock.astro';
+import ScrollReveal from '@cw/core/components/motion/ScrollReveal.astro';
 import { landingBaseProps, schemaConfig } from '@/data/page-config';
 import { siteData } from '@/data/site-data';
 // TODO: import your data
@@ -86,33 +89,52 @@ const page = {
     subtext={page.heroText}
   />
 
+  <!-- ① VORTEILE: Was der Kunde bekommt — technische Differenzierung -->
+  <ScrollReveal direction="up">
+    <TechExcellence />
+  </ScrollReveal>
+
+  <!-- ② PROOF: Zahlen beweisen — Vergleich gegen Konkurrenz -->
+  {page.vergleich && (
+    <ScrollReveal direction="up">
+      <VergleichsTabelle
+        brandName={siteData.name}
+        competitors={page.vergleich.competitors}
+        criteria={page.vergleich.criteria}
+        heading={`${siteData.name} vs. Alternativen`}
+      />
+    </ScrollReveal>
+  )}
+
+  <!-- ② PROOF: Soziale Bewährtheit — echte Kunden bestätigen die Tabelle -->
+  <ScrollReveal direction="up">
+    <Testimonials items={siteData.testimonials} siteName={siteData.name} />
+  </ScrollReveal>
+
+  <!-- ③ INHALT: Lokale Substanz — min. 300 Wörter für gutes Ranking -->
+  <!-- TODO: Geo-relevantes Bild mit alt-Text "[Leistung] [Stadt]" -->
   <section class="lokale-content">
     <div class="container">
       <p class="intro">{page.heroText}</p>
-      <!-- TODO: Inhalt ausbauen — min. 300 Wörter für gutes Ranking -->
       <!-- Tipps: Was macht eine gute Website für Unternehmen in {city} aus? -->
       <!-- Lokale Referenzen / Kunden aus der Region erwähnen -->
     </div>
   </section>
 
-  {page.vergleich && (
-    <VergleichsTabelle
-      brandName={siteData.name}
-      competitors={page.vergleich.competitors}
-      criteria={page.vergleich.criteria}
-      heading={`${siteData.name} vs. Alternativen`}
-    />
-  )}
-
   {page.aeoItems && page.aeoItems.length > 0 && (
     <AEOSection items={page.aeoItems} />
   )}
 
+  <!-- ④ FAQ: Einwände ausräumen -->
   {page.faqs.length > 0 && (
-    <FAQ items={page.faqs} />
+    <ScrollReveal direction="up">
+      <FAQ items={page.faqs} />
+    </ScrollReveal>
   )}
 
-  <CTABlock />
+  <ScrollReveal direction="zoom">
+    <CTABlock />
+  </ScrollReveal>
 </LandingPage>
 
 <style>
