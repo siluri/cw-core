@@ -92,7 +92,8 @@ export const siteData = {
     ogImage: '/og/og-image.png',
     // Schema.org LocalBusiness — verbessert Knowledge Panel + AI-Suche
     areaServed: [] as string[],             // z.B. ['Regensburg', 'Barbing', 'Lappersdorf']
-    sameAs: [] as string[],                 // Social-Profile-URLs für Entity-Resolution
+    sameAs: [] as string[],                 // Social-Profile-URLs: Google Business, LinkedIn, etc.
+    knowsAbout: [] as string[],             // Fachthemen: ['Webdesign', 'DSGVO', ...] — AI-Zitierbarkeit
     openingHours: [] as string[],           // z.B. ['Mo-Fr 08:00-17:00']
     foundingDate: undefined as string | undefined,  // z.B. '2015'
     geo: undefined as { latitude: number; longitude: number } | undefined,
