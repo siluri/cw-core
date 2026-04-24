@@ -65,6 +65,10 @@ interface Props {
   rechtlichesHeading?: string;
   /** Links rendered in the "legal" column. Defaults to Impressum + Datenschutz. */
   rechtlichesLinks?: readonly FooterLink[];
+  /** Optional 4th column heading (e.g. "Für Ihre Branche"). */
+  extraHeading?: string;
+  /** Optional 4th column links (landing pages, verticals, etc.). */
+  extraLinks?: readonly FooterLink[];
   /** Show "/karriere" link in the services column. */
   showKarriereLink?: boolean;
   /** Karriere link label. Defaults to "Karriere". */
@@ -93,6 +97,8 @@ const {
     { label: 'Impressum', href: '/impressum' },
     { label: 'Datenschutz', href: '/datenschutz' },
   ],
+  extraHeading,
+  extraLinks,
   showKarriereLink = false,
   karriereLabel = 'Karriere',
   karriereHref = '/karriere',
@@ -103,7 +109,7 @@ const copyrightOwner = owner ?? siteName;
 ---
 <footer>
   <div class="container">
-    <div class="footer-grid">
+    <div class="footer-grid" style={(extraLinks?.length ?? 0) > 0 ? 'grid-template-columns: 2fr 1fr 1fr 1fr' : undefined}>
       <div class="footer-brand">
         <a href="/" class="logo-img">
           <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="lazy" />
@@ -142,6 +148,17 @@ const copyrightOwner = owner ?? siteName;
           ))}
         </ul>
       </div>
+
+      {(extraLinks?.length ?? 0) > 0 && (
+        <div class="footer-links">
+          <h3>{extraHeading ?? 'Mehr'}</h3>
+          <ul>
+            {extraLinks!.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
 
     <div class="footer-bottom">
@@ -236,8 +253,11 @@ const copyrightOwner = owner ?? siteName;
   }
   .footer-credit a:hover { color: white; }
 
+  @media (max-width: 1023px) {
+    .footer-grid { grid-template-columns: 1fr 1fr !important; }
+  }
   @media (max-width: 767px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-grid { grid-template-columns: 1fr !important; gap: 2rem; }
     .footer-bottom { flex-direction: column; align-items: flex-start; }
   }
 </style>
