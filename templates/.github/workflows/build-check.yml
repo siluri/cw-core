@@ -1,0 +1,51 @@
+# Build Check — Customer-Website CI
+#
+# Purpose: Fail fast on lockfile drift or broken builds, independent of Vercel.
+# Mirror of what Vercel does at deploy time (pnpm install --frozen-lockfile + pnpm build),
+# but runs on every push/PR and is visible as a red/green check on the commit BEFORE Vercel triggers.
+#
+# Template location: cw-core/templates/.github/workflows/build-check.yml
+# Rolled out to: all 9 customer-* repos via scripts/rollout-build-check.sh
+# Runtime: ~60–90s per run (Node+pnpm cache hits)
+#
+# If this workflow is red but Vercel is green, something is off — investigate immediately.
+# If this workflow is red and Vercel is red, the lockfile was committed stale. Run:
+#   pnpm install && git add pnpm-lock.yaml && git commit --amend --no-edit && git push -f
+
+name: Build Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install (frozen-lockfile — must match Vercel behavior exactly)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
