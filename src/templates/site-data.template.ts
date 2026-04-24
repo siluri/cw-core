@@ -87,8 +87,10 @@ export const siteData = {
   // ─── SEO ───────────────────────────────────────────────────────────────────
   seo: {
     titleTemplate: '%s | TODO: Firmenname',
-    defaultTitle: 'TODO: Firmenname – Kurzslogan',
-    defaultDescription: 'TODO: 1-2 Sätze für Google-Snippet',
+    // Homepage-Title: "<Hauptkeyword> <Ort> – <USP> | <Brand>" → max. 60 Zeichen
+    // Lokal-SEO: Geo-Keyword IMMER im Title. Bsp: "Elektriker Regensburg – 24h Notdienst | Müller"
+    defaultTitle: 'TODO: Hauptkeyword Ort – USP | Firmenname',
+    defaultDescription: 'TODO: 1-2 Sätze mit Geo + Zielgruppe + USP für Google-Snippet (150-160 Zeichen)',
     ogImage: '/og/og-image.png',
     // Schema.org LocalBusiness — verbessert Knowledge Panel + AI-Suche
     areaServed: [] as string[],             // z.B. ['Regensburg', 'Barbing', 'Lappersdorf']
