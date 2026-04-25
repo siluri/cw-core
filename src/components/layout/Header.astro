@@ -118,7 +118,7 @@ const {
   #main-nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: clamp(0.75rem, 1.5vw, 1.75rem);
   }
   #main-nav a:not(.btn-accent) {
     color: rgba(255,255,255,0.85);
@@ -148,7 +148,7 @@ const {
     transition: transform 0.2s, opacity 0.2s;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 1099px) {
     #nav-toggle { display: flex; }
     .logo span { display: none; }
     #main-nav {
