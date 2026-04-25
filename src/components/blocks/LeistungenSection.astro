@@ -61,7 +61,7 @@ const {
             {item.description && <p>{item.description}</p>}
             {item.href && (
               <a href={item.href} class="leistung-link">
-                {readMoreLabel}
+                {readMoreLabel}<span class="sr-only"> über {item.title}</span>
                 <span aria-hidden="true"> →</span>
               </a>
             )}
