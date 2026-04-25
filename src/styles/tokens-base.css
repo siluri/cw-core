@@ -195,3 +195,43 @@ h1, h2, h3, h4, h5, h6 {
   [data-motion-parallax] { transform: none !important; }
   [data-motion-blob] { animation: none !important; }
 }
+
+/* ---------------------------------------------------------------------------
+ * Section layout primitives — "atmende Sections" mit Soft-Snap
+ * Verbraucht von @cw/core/components/motion/FullBleed.astro.
+ * Snap nur Desktop (≥768px) und nur wenn der User Motion erlaubt.
+ * -------------------------------------------------------------------------*/
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y proximity;
+    scroll-padding-top: 4rem;
+  }
+}
+
+.section-fullbleed {
+  min-height: 90vh;
+  scroll-snap-align: start;
+  display: grid;
+  place-items: center;
+  padding-block: clamp(4rem, 8vh, 7rem);
+}
+
+.section-fullbleed > :where(*) {
+  width: 100%;
+}
+
+.section-fullbleed.is-hero {
+  min-height: 100vh;
+}
+
+.section-bridge {
+  scroll-snap-align: none;
+}
+
+@media (max-width: 767px) {
+  .section-fullbleed {
+    min-height: auto;
+    place-items: stretch;
+    padding-block: 3.5rem;
+  }
+}
