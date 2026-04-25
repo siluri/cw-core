@@ -26,8 +26,8 @@ interface Props {
   heading?: string;
   /** Optional override for the section subheading. `{count}` is replaced with `items.length`. */
   subheadingTemplate?: string;
-  /** Fixed column count. Default: auto-fit (responsive). Use 3 for 6-item grids to avoid orphan rows. */
-  columns?: 2 | 3 | 4;
+  /** Fixed column count. Default: auto (smart calcCols). */
+  columns?: 2 | 3 | 4 | 5;
 }
 
 const {
@@ -38,19 +38,19 @@ const {
 } = Astro.props;
 
 // Symmetrisches Grid ohne Orphan-Zeilen.
-// Formel: cols = min(4, ceil(n/2)) — erzeugt immer ≥ 2 Zeilen mit gleichmäßiger Füllung.
+// Formel: cols = min(5, ceil(n/2)) — erzeugt immer ≥ 2 Zeilen mit gleichmäßiger Füllung.
 // Bei Einzelwaisen (n % cols === 1) einen Schritt runter.
-// n=4→2×2, n=5→3+2, n=6→3×2, n=7→4+3, n=8→4×2, n=9→3×3
-function calcCols(n: number): 2 | 3 | 4 | undefined {
+// n=4→2×2, n=5→3+2, n=6→3×2, n=7→4+3, n=8→4×2, n=9→3×3, n=10→5×2
+function calcCols(n: number): 2 | 3 | 4 | 5 | undefined {
   if (n <= 3) return undefined;
-  let c = Math.min(4, Math.ceil(n / 2)) as 2 | 3 | 4;
+  let c = Math.min(5, Math.ceil(n / 2)) as 2 | 3 | 4 | 5;
   if (n % c === 1 && c > 2) {
-    const alt = (c - 1) as 2 | 3;
+    const alt = (c - 1) as 2 | 3 | 4;
     if (n % alt !== 1) c = alt;
   }
   return c;
 }
-const smartColumns: 2 | 3 | 4 | undefined = columns ?? calcCols(items.length);
+const smartColumns: 2 | 3 | 4 | 5 | undefined = columns ?? calcCols(items.length);
 
 const subheading = subheadingTemplate.replace('{count}', String(items.length));
 ---
@@ -89,7 +89,8 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
   .steps,
   .steps.cols-2,
   .steps.cols-3,
-  .steps.cols-4 {
+  .steps.cols-4,
+  .steps.cols-5 {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -120,15 +121,22 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
     .steps { gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
     .steps.cols-2,
     .steps.cols-3,
-    .steps.cols-4 { gap: 1.5rem; grid-template-columns: repeat(2, 1fr); }
+    .steps.cols-4,
+    .steps.cols-5 { gap: 1.5rem; grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (min-width: 760px) {
     .steps.cols-3,
-    .steps.cols-4 { grid-template-columns: repeat(3, 1fr); }
+    .steps.cols-4,
+    .steps.cols-5 { grid-template-columns: repeat(3, 1fr); }
   }
 
   @media (min-width: 920px) {
-    .steps.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .steps.cols-4,
+    .steps.cols-5 { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (min-width: 1100px) {
+    .steps.cols-5 { grid-template-columns: repeat(5, 1fr); }
   }
 </style>
