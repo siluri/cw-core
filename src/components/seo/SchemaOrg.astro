@@ -236,12 +236,13 @@ const localBusinessSchema = {
     ? {
         employee: [...employees].map((m) => ({
           '@type': 'Person',
+          '@id': `${url}/#person-${m.name.toLowerCase().replace(/[^a-z]+/g, '-')}`,
           name: m.name,
           ...(m.role ? { jobTitle: m.role } : {}),
           ...(m.title ? { honorificSuffix: m.title } : {}),
           ...(m.phone ? { telephone: m.phone } : {}),
           ...(m.email ? { email: m.email } : {}),
-          worksFor: { '@type': 'Organization', name },
+          worksFor: { '@type': 'Organization', '@id': orgId, name },
           ...(m.credentials && m.credentials.length
             ? {
                 hasCredential: [...m.credentials].map((c) => ({
