@@ -94,6 +94,23 @@ interface Props {
   lang?: string;
   /** OG locale. Defaults to "de_DE". */
   ogLocale?: string;
+  /**
+   * Open Graph object type. Defaults to "website".
+   * Set to "profile" for Author-/Person-Pages — Google + Social-Scraper
+   * mappen das auf einer Person-Entity (statt einer generischen Website).
+   * Andere gültige Werte: "article", "book", "video.movie" etc.
+   */
+  ogType?: 'website' | 'profile' | 'article' | (string & {});
+  /**
+   * Profile-spezifische OG-Meta. Nur ausgegeben wenn `ogType="profile"`.
+   * Quelle: https://ogp.me/#type_profile
+   */
+  ogProfile?: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    gender?: 'male' | 'female';
+  };
   /** Plausible script src. If set, the Plausible snippet is injected. */
   plausibleScript?: string;
   /** Plausible host for preconnect. Defaults to "https://plausible.io". Set to undefined when proxying same-origin. */
@@ -118,6 +135,8 @@ const {
   defaultOgImage,
   lang = 'de',
   ogLocale = 'de_DE',
+  ogType = 'website',
+  ogProfile,
   plausibleScript,
   plausibleHost = 'https://plausible.io',
   plausibleEndpoint,
@@ -146,8 +165,16 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
     <meta property="og:description" content={resolvedDescription} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={ogLocale} />
+    {ogType === 'profile' && ogProfile && (
+      <>
+        {ogProfile.firstName && <meta property="profile:first_name" content={ogProfile.firstName} />}
+        {ogProfile.lastName && <meta property="profile:last_name" content={ogProfile.lastName} />}
+        {ogProfile.username && <meta property="profile:username" content={ogProfile.username} />}
+        {ogProfile.gender && <meta property="profile:gender" content={ogProfile.gender} />}
+      </>
+    )}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -205,6 +232,9 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="apple-touch-icon" href="/favicon-192.png" />
+
+    <!-- Page-spezifische Head-Erweiterungen (zusätzliche JSON-LD, OG-Image-Dimensions, profile-Meta etc.) -->
+    <slot name="head" />
   </head>
   <body>
     <slot />

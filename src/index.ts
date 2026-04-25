@@ -47,6 +47,7 @@ export type { FeedbackItem } from './components/blocks/KundenfeedbackSection.ast
 export type { AEOItem } from './components/blocks/AEOSection.astro';
 export type { ReferenzItem } from './components/blocks/ReferenzenGrid.astro';
 export type { BentoItem } from './components/blocks/BentoGrid.astro';
+export type { Props as AuthorBoxProps } from './components/blocks/AuthorBox.astro';
 
 // ---------------------------------------------------------------------------
 // Layout component types

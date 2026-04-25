@@ -103,6 +103,15 @@ interface Props {
   plausibleEndpoint?: string;
   /** Schema.org props. */
   schema?: SchemaProps;
+  /** Open Graph object type. Defaults to "website". Set to "profile" for Author-Pages. */
+  ogType?: 'website' | 'profile' | 'article' | (string & {});
+  /** Profile-spezifische OG-Meta. Nur ausgegeben wenn ogType="profile". */
+  ogProfile?: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    gender?: 'male' | 'female';
+  };
   /** Header config. */
   header?: HeaderConfig;
   /** Footer config. Required because Footer requires `siteName`. */
@@ -126,6 +135,8 @@ const {
   plausibleScript,
   plausibleEndpoint,
   schema,
+  ogType,
+  ogProfile,
   header = {},
   footer,
   motion,
@@ -146,7 +157,10 @@ const {
   plausibleScript={plausibleScript}
   plausibleEndpoint={plausibleEndpoint}
   schema={schema}
+  ogType={ogType}
+  ogProfile={ogProfile}
 >
+  <slot name="head" slot="head" />
   {motion?.smoothScroll && <SmoothScroll />}
   {motion?.progress && <ScrollProgress />}
   {motion?.cursor && <CustomCursor />}

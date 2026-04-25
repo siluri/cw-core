@@ -177,9 +177,16 @@ const typeArray = ['LocalBusiness', 'ProfessionalService', ...(additionalTypes a
 
 // schema-dts enforces a single `@type` literal per object; we emit an array
 // because JSON-LD allows multiple types per node. Cast the composite object.
+// Stabile @id-Anker für Entity-Resolution. Person-Schemas auf Author-Pages
+// können via { @id: `${url}/#organization` } auf die Organization referenzieren —
+// LLMs und Google erkennen so wiederkehrende Entities zuverlässig.
+const orgId = `${url}/#organization`;
+const websiteId = `${url}/#website`;
+
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': typeArray,
+  '@id': orgId,
   name,
   description,
   url,
@@ -268,13 +275,15 @@ const localBusinessSchema = {
   ...(knowsAbout && knowsAbout.length ? { knowsAbout: [...knowsAbout] } : {}),
 } as unknown as WithContext<LocalBusiness>;
 
-const webSiteSchema: WithContext<WebSite> = {
+const webSiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': websiteId,
   name,
   description,
   url,
-};
+  publisher: { '@id': orgId },
+} as unknown as WithContext<WebSite>;
 
 // FAQPage schema (standalone block)
 const faqSchema = faqs && faqs.length > 0
