@@ -37,6 +37,12 @@ const {
   columns,
 } = Astro.props;
 
+// 4 Items in auto-fit (minmax 220px) bricht bei ~900px Container zu 3+1.
+// Regel: 4 Items → 2×2; 6 Items → 3+3. Explizites `columns`-Prop überschreibt immer.
+const smartColumns: 2 | 3 | 4 | undefined =
+  columns ??
+  (items.length === 4 ? 2 : items.length === 6 ? 3 : undefined);
+
 const subheading = subheadingTemplate.replace('{count}', String(items.length));
 ---
 {items.length > 0 && (
@@ -47,7 +53,7 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
       <p class="section-subheading">{subheading}</p>
     </div>
 
-    <div class={`steps${columns ? ` cols-${columns}` : ''}`}>
+    <div class={`steps${smartColumns ? ` cols-${smartColumns}` : ''}`}>
       {items.map((step) => (
         <div class="step">
           <div class="step-nr" aria-hidden="true">{step.nr}</div>
