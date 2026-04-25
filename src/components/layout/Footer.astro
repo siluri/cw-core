@@ -69,6 +69,10 @@ interface Props {
   extraHeading?: string;
   /** Optional 4th column links (landing pages, verticals, etc.). */
   extraLinks?: readonly FooterLink[];
+  /** Optional 5th column heading. */
+  extraHeading2?: string;
+  /** Optional 5th column links. */
+  extraLinks2?: readonly FooterLink[];
   /** Show "/karriere" link in the services column. */
   showKarriereLink?: boolean;
   /** Karriere link label. Defaults to "Karriere". */
@@ -99,6 +103,8 @@ const {
   ],
   extraHeading,
   extraLinks,
+  extraHeading2,
+  extraLinks2,
   showKarriereLink = false,
   karriereLabel = 'Karriere',
   karriereHref = '/karriere',
@@ -109,7 +115,7 @@ const copyrightOwner = owner ?? siteName;
 ---
 <footer>
   <div class="container">
-    <div class="footer-grid" style={(extraLinks?.length ?? 0) > 0 ? 'grid-template-columns: 2fr 1fr 1fr 1fr' : undefined}>
+    <div class="footer-grid" style={(extraLinks2?.length ?? 0) > 0 ? 'grid-template-columns: 2fr 1fr 1fr 1fr 1fr' : (extraLinks?.length ?? 0) > 0 ? 'grid-template-columns: 2fr 1fr 1fr 1fr' : undefined}>
       <div class="footer-brand">
         <a href="/" class="logo-img">
           <img src={logoSrcDark ?? logoSrc} alt={siteName} width={logoWidth} height={logoHeight} loading="lazy" />
@@ -154,6 +160,17 @@ const copyrightOwner = owner ?? siteName;
           <h3>{extraHeading ?? 'Mehr'}</h3>
           <ul>
             {extraLinks!.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(extraLinks2?.length ?? 0) > 0 && (
+        <div class="footer-links">
+          <h3>{extraHeading2 ?? 'Mehr'}</h3>
+          <ul>
+            {extraLinks2!.map((item) => (
               <li><a href={item.href}>{item.label}</a></li>
             ))}
           </ul>

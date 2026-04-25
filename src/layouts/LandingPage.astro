@@ -74,6 +74,8 @@ export interface FooterConfig {
   rechtlichesLinks?: readonly FooterLink[];
   extraHeading?: string;
   extraLinks?: readonly FooterLink[];
+  extraHeading2?: string;
+  extraLinks2?: readonly FooterLink[];
   showKarriereLink?: boolean;
   karriereLabel?: string;
   karriereHref?: string;
@@ -197,6 +199,8 @@ const {
     rechtlichesLinks={footer.rechtlichesLinks}
     extraHeading={footer.extraHeading}
     extraLinks={footer.extraLinks}
+    extraHeading2={footer.extraHeading2}
+    extraLinks2={footer.extraLinks2}
     showKarriereLink={footer.showKarriereLink}
     karriereLabel={footer.karriereLabel}
     karriereHref={footer.karriereHref}
