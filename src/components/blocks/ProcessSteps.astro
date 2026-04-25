@@ -37,11 +37,20 @@ const {
   columns,
 } = Astro.props;
 
-// 4 Items in auto-fit (minmax 220px) bricht bei ~900px Container zu 3+1.
-// Regel: 4 Items → 2×2; 6 Items → 3+3. Explizites `columns`-Prop überschreibt immer.
-const smartColumns: 2 | 3 | 4 | undefined =
-  columns ??
-  (items.length === 4 ? 2 : items.length === 6 ? 3 : undefined);
+// Symmetrisches Grid ohne Orphan-Zeilen.
+// Formel: cols = min(4, ceil(n/2)) — erzeugt immer ≥ 2 Zeilen mit gleichmäßiger Füllung.
+// Bei Einzelwaisen (n % cols === 1) einen Schritt runter.
+// n=4→2×2, n=5→3+2, n=6→3×2, n=7→4+3, n=8→4×2, n=9→3×3
+function calcCols(n: number): 2 | 3 | 4 | undefined {
+  if (n <= 3) return undefined;
+  let c = Math.min(4, Math.ceil(n / 2)) as 2 | 3 | 4;
+  if (n % c === 1 && c > 2) {
+    const alt = (c - 1) as 2 | 3;
+    if (n % alt !== 1) c = alt;
+  }
+  return c;
+}
+const smartColumns: 2 | 3 | 4 | undefined = columns ?? calcCols(items.length);
 
 const subheading = subheadingTemplate.replace('{count}', String(items.length));
 ---
