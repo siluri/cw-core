@@ -28,6 +28,10 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
 body {
   font-family: var(--font-sans);
   color: var(--color-text, #1a1a1a);
