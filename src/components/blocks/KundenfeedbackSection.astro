@@ -81,9 +81,11 @@ const {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 900px) {
     .feedback-grid { grid-template-columns: repeat(2, 1fr); }
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 560px) {
     .feedback-grid { grid-template-columns: 1fr; }
   }

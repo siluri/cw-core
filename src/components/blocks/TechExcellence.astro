@@ -152,6 +152,7 @@ const {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 900px) {
     .tech-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -199,6 +200,7 @@ const {
     color: rgba(255, 255, 255, 0.7);
     font-style: italic;
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 640px) {
     .tech-card {
       padding: 1.5rem 1.25rem;

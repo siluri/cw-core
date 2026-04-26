@@ -114,6 +114,7 @@ const itempropName = productName ?? `${siteName} Website-Service`;
   }
   .author strong { display: block; font-size: 0.9375rem; }
   .author span { font-size: 0.8125rem; color: var(--color-muted); }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 768px) {
     .testimonials-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   }

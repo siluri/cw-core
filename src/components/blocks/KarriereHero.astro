@@ -139,6 +139,7 @@ const hasImage = !!teamImage;
   }
   .hero-img { display: block; width: 100%; height: auto; object-fit: cover; }
 
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 900px) {
     .hero-content--split { grid-template-columns: 1fr; }
     .hero-image-wrap { order: -1; max-height: 250px; }

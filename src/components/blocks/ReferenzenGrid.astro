@@ -76,6 +76,7 @@ const { items = [], disclaimer } = Astro.props;
     overflow: hidden;
     border: 1px solid #e5e7eb;
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 768px) {
     .referenz-card { grid-template-columns: 1fr; }
   }

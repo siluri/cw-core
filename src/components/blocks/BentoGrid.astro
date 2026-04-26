@@ -205,6 +205,7 @@ const spanStyle = (span?: BentoItem['span']) => {
     opacity: 0.9;
   }
 
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 768px) {
     .bento-grid { grid-template-columns: 1fr; }
     .bento-item {

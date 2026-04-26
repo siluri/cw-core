@@ -228,6 +228,7 @@ h1, h2, h3, h4, h5, h6 {
   scroll-snap-align: none;
 }
 
+/* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
 @media (max-width: 767px) {
   .section-fullbleed {
     min-height: auto;

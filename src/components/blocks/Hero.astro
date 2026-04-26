@@ -406,6 +406,7 @@ const motionCfg: HeroMotionConfig =
   }
   .usp-icon { font-size: 1.125rem; }
 
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 900px) {
     .hero--split .container {
       grid-template-columns: 1fr;
@@ -431,6 +432,7 @@ const motionCfg: HeroMotionConfig =
       transform: none;
     }
   }
+  /* stylelint-disable-next-line plugin/no-max-width-media -- Legacy Desktop-First, TODO: refactor to Mobile-First */
   @media (max-width: 640px) {
     .hero { padding: 3.5rem 0 3rem; }
     .hero-cta { flex-direction: column; }
