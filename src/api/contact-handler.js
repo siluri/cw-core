@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @cw/core – createContactHandler
  *
@@ -35,44 +36,36 @@
  *   });
  */
 
-export interface ContactHandlerConfig {
-  /** Erlaubte Origin-URLs (z.B. ['https://kunde.de', 'https://www.kunde.de']) */
-  allowedOrigins: string[];
-  /** Anzeigename im From-Header (z.B. 'Kunde GmbH') */
-  fromName: string;
-  /** From-Adresse — Default 'noreply@blitzsicht.com' (Resend-verifizierte Domain) */
-  fromEmail?: string;
-  /** Subject-Zeile der Resend-Mail */
-  subject: string;
-  /** Rate-Limit max requests pro Window (Default 3) */
-  rateLimitMax?: number;
-  /** Rate-Limit Fenster in Millisekunden (Default 10 min) */
-  rateLimitWindowMs?: number;
-  /** Eigene Spam-Keywords zusaetzlich zur Default-Liste */
-  extraSpamKeywords?: string[];
-}
+/**
+ * @typedef {Object} ContactHandlerConfig
+ * @property {string[]} allowedOrigins
+ * @property {string} fromName
+ * @property {string} [fromEmail]
+ * @property {string} subject
+ * @property {number} [rateLimitMax]
+ * @property {number} [rateLimitWindowMs]
+ * @property {string[]} [extraSpamKeywords]
+ */
 
-interface FormPayload {
-  name?: string;
-  email?: string;
-  company?: string;
-  phone?: string;
-  message?: string;
-  website?: string;
-  botcheck?: string | boolean;
-  url_honey?: string;
-  'cf-turnstile-response'?: string;
-  [key: string]: unknown;
-}
+/**
+ * @typedef {Object} FormPayload
+ * @property {string} [name]
+ * @property {string} [email]
+ * @property {string} [company]
+ * @property {string} [phone]
+ * @property {string} [message]
+ * @property {string} [website]
+ * @property {string|boolean} [botcheck]
+ * @property {string} [url_honey]
+ * @property {string} [cf-turnstile-response]
+ */
 
 const DEFAULT_SPAM_KEYWORDS = [
   'seo services', 'seo service', 'link building', 'backlink',
   'cooperation proposal', 'guest post', 'collaboration partnership',
   'crypto', 'bitcoin', 'btc wallet', 'eth wallet',
   'casino', 'viagra', 'cialis',
-  // Cyrillic spam markers
   'сотрудничество', 'продвижение', 'предложение',
-  // generische Bot-Phrasen
   'click here now', 'limited time offer', 'act now',
 ];
 
@@ -80,41 +73,47 @@ const URL_PATTERN = /https?:\/\/[^\s<>"]+/gi;
 const BTC_PATTERN = /\b(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}\b/g;
 const ETH_PATTERN = /\b0x[a-fA-F0-9]{40}\b/g;
 
-const inMemoryRateLimit = new Map<string, number[]>();
+/** @type {Map<string, number[]>} */
+const inMemoryRateLimit = new Map();
 
-function isSpamContent(message: string, extraKeywords: string[] = []): boolean {
+/**
+ * @param {string} message
+ * @param {string[]} extraKeywords
+ * @returns {boolean}
+ */
+function isSpamContent(message, extraKeywords) {
   if (!message) return false;
   const lower = message.toLowerCase();
-  const keywords = [...DEFAULT_SPAM_KEYWORDS, ...extraKeywords];
+  const keywords = [...DEFAULT_SPAM_KEYWORDS, ...(extraKeywords || [])];
   if (keywords.some(kw => lower.includes(kw))) return true;
   const urls = message.match(URL_PATTERN);
   if (urls && urls.length >= 2) return true;
   if (BTC_PATTERN.test(message) || ETH_PATTERN.test(message)) return true;
-  const cyrillicCount = (message.match(/[Ѐ-ӿ]/g) ?? []).length;
-  const cjkCount = (message.match(/[一-鿿぀-ヿ]/g) ?? []).length;
-  const totalLetters = (message.match(/\p{L}/gu) ?? []).length;
+  const cyrillicCount = (message.match(/[Ѐ-ӿ]/g) || []).length;
+  const cjkCount = (message.match(/[一-鿿぀-ヿ]/g) || []).length;
+  const totalLetters = (message.match(/\p{L}/gu) || []).length;
   if (totalLetters > 20 && (cyrillicCount + cjkCount) / totalLetters > 0.3) return true;
   return false;
 }
 
-async function checkRateLimit(
-  ip: string,
-  max: number,
-  windowMs: number,
-): Promise<boolean> {
+/**
+ * @param {string} ip
+ * @param {number} max
+ * @param {number} windowMs
+ * @returns {Promise<boolean>}
+ */
+async function checkRateLimit(ip, max, windowMs) {
   const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
   const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (upstashUrl && upstashToken) {
-    // Persistenter Rate-Limit ueber alle Vercel-Function-Instances
     const key = `rl:contact:${ip}`;
     try {
       const incrRes = await fetch(`${upstashUrl}/incr/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${upstashToken}` },
       });
-      const incrData = await incrRes.json() as { result: number };
+      const incrData = /** @type {{ result: number }} */ (await incrRes.json());
       if (incrData.result === 1) {
-        // erstmaliger Hit -> TTL setzen
         await fetch(`${upstashUrl}/expire/${encodeURIComponent(key)}/${Math.floor(windowMs / 1000)}`, {
           headers: { Authorization: `Bearer ${upstashToken}` },
         });
@@ -125,44 +124,58 @@ async function checkRateLimit(
     }
   }
 
-  // In-Memory-Fallback
   const now = Date.now();
-  const hits = (inMemoryRateLimit.get(ip) ?? []).filter(t => now - t < windowMs);
+  const hits = (inMemoryRateLimit.get(ip) || []).filter(t => now - t < windowMs);
   if (hits.length >= max) return false;
   hits.push(now);
   inMemoryRateLimit.set(ip, hits);
   return true;
 }
 
-interface MinimalRequest {
-  method?: string;
-  headers: Record<string, string | string[] | undefined>;
-  body?: unknown;
+/**
+ * @param {{ headers: Record<string, string | string[] | undefined> }} req
+ * @returns {string}
+ */
+function getClientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (typeof fwd === 'string') {
+    const first = fwd.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const real = req.headers['x-real-ip'];
+  if (typeof real === 'string' && real) return real;
+  return 'unknown';
 }
 
-interface MinimalResponse {
-  status(code: number): MinimalResponse;
-  json(payload: unknown): void;
+/**
+ * @param {string} url
+ * @returns {string}
+ */
+function safeOrigin(url) {
+  try { return new URL(url).origin; }
+  catch { return ''; }
 }
 
-export function createContactHandler(config: ContactHandlerConfig) {
-  const {
-    allowedOrigins,
-    fromName,
-    fromEmail = 'noreply@blitzsicht.com',
-    subject,
-    rateLimitMax = 3,
-    rateLimitWindowMs = 10 * 60 * 1000,
-    extraSpamKeywords = [],
-  } = config;
+/**
+ * @param {ContactHandlerConfig} config
+ * @returns {(req: any, res: any) => Promise<void>}
+ */
+export function createContactHandler(config) {
+  const allowedOrigins = config.allowedOrigins;
+  const fromName = config.fromName;
+  const fromEmail = config.fromEmail || 'noreply@blitzsicht.com';
+  const subject = config.subject;
+  const rateLimitMax = config.rateLimitMax ?? 3;
+  const rateLimitWindowMs = config.rateLimitWindowMs ?? 10 * 60 * 1000;
+  const extraSpamKeywords = config.extraSpamKeywords || [];
 
-  return async function handler(req: MinimalRequest, res: MinimalResponse): Promise<void> {
+  return async function handler(req, res) {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Method Not Allowed' });
       return;
     }
 
-    // 2. Origin-Check
+    // Origin-Check
     const originHeader = req.headers.origin;
     const refererHeader = req.headers.referer;
     const origin = typeof originHeader === 'string' ? originHeader : '';
@@ -174,7 +187,7 @@ export function createContactHandler(config: ContactHandlerConfig) {
       return;
     }
 
-    // 3. Rate-Limit
+    // Rate-Limit
     const ip = getClientIp(req);
     const allowed = await checkRateLimit(ip, rateLimitMax, rateLimitWindowMs);
     if (!allowed) {
@@ -182,22 +195,23 @@ export function createContactHandler(config: ContactHandlerConfig) {
       return;
     }
 
-    // 4. Body parsen
-    const body: FormPayload = (req.body && typeof req.body === 'object')
-      ? req.body as FormPayload
+    // Body parsen
+    /** @type {FormPayload} */
+    const body = (req.body && typeof req.body === 'object')
+      ? req.body
       : (() => {
-          try { return JSON.parse(req.body as string) as FormPayload; }
-          catch { return {} as FormPayload; }
+          try { return JSON.parse(req.body); }
+          catch { return {}; }
         })();
 
-    // 5. Honeypot — silent drop
+    // Honeypot — silent drop
     if (body.botcheck || body.url_honey) {
       console.log('[contact-handler] honeypot triggered, ip=', ip);
       res.status(200).json({ ok: true });
       return;
     }
 
-    // 6. Turnstile-Pflicht
+    // Turnstile-Pflicht
     const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
     if (!turnstileSecret) {
       console.error('[contact-handler] TURNSTILE_SECRET_KEY missing');
@@ -216,7 +230,7 @@ export function createContactHandler(config: ContactHandlerConfig) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ secret: turnstileSecret, response: token, remoteip: ip }),
       });
-      const cfData = await cfRes.json() as { success: boolean };
+      const cfData = /** @type {{ success: boolean }} */ (await cfRes.json());
       if (!cfData.success) {
         res.status(400).json({ ok: false, error: 'Bot-Schutz-Prüfung fehlgeschlagen.' });
         return;
@@ -227,7 +241,7 @@ export function createContactHandler(config: ContactHandlerConfig) {
       return;
     }
 
-    // 7. Email-Validation
+    // Email-Validation
     const email = typeof body.email === 'string' ? body.email.trim() : '';
     if (!email || !email.includes('@')) {
       res.status(400).json({ ok: false, error: 'E-Mail-Adresse fehlt oder ist ungültig.' });
@@ -240,7 +254,7 @@ export function createContactHandler(config: ContactHandlerConfig) {
     const message = typeof body.message === 'string' ? body.message.trim() : '';
     const website = typeof body.website === 'string' ? body.website.trim() : '';
 
-    // 8. Content-Filter — silent drop
+    // Content-Filter — silent drop
     const haystack = [name, company, message, website].filter(Boolean).join(' ');
     if (isSpamContent(haystack, extraSpamKeywords)) {
       console.log('[contact-handler] spam pattern matched, ip=', ip, 'preview=', haystack.slice(0, 80));
@@ -248,7 +262,7 @@ export function createContactHandler(config: ContactHandlerConfig) {
       return;
     }
 
-    // 9. Resend-Versand
+    // Resend-Versand
     const recipient = process.env.CONTACT_EMAIL;
     if (!recipient) {
       console.error('[contact-handler] CONTACT_EMAIL missing');
@@ -262,7 +276,8 @@ export function createContactHandler(config: ContactHandlerConfig) {
       return;
     }
 
-    const lines: string[] = [];
+    /** @type {string[]} */
+    const lines = [];
     if (name) lines.push(`Name: ${name}`);
     lines.push(`Email: ${email}`);
     if (company) lines.push(`Unternehmen: ${company}`);
@@ -301,20 +316,4 @@ export function createContactHandler(config: ContactHandlerConfig) {
       res.status(500).json({ ok: false, error: 'Email konnte nicht gesendet werden.' });
     }
   };
-}
-
-function safeOrigin(url: string): string {
-  try { return new URL(url).origin; }
-  catch { return ''; }
-}
-
-function getClientIp(req: MinimalRequest): string {
-  const fwd = req.headers['x-forwarded-for'];
-  if (typeof fwd === 'string') {
-    const first = fwd.split(',')[0]?.trim();
-    if (first) return first;
-  }
-  const real = req.headers['x-real-ip'];
-  if (typeof real === 'string' && real) return real;
-  return 'unknown';
 }
