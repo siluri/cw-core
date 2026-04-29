@@ -1,6 +1,6 @@
 {
   "name": "@cw/core",
-  "version": "0.8.22-alpha",
+  "version": "0.8.23-alpha",
   "type": "module",
   "description": "Shared Astro components, layouts and styles for Blitzsicht customer websites",
   "main": "src/index.ts",
@@ -22,11 +22,7 @@
     "check": "astro check",
     "optimize:images": "node scripts/optimize-images.mjs --delete-originals",
     "generate:og": "node scripts/generate-og.mjs",
-    "lint:css": "stylelint 'src/**/*.{astro,css}'",
-    "prepare": "simple-git-hooks"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint:css"
+    "lint:css": "stylelint 'src/**/*.{astro,css}'"
   },
   "peerDependencies": {
     "astro": ">=5.0.0",
