@@ -74,10 +74,13 @@ const submitUrl = actionUrl ?? 'https://api.web3forms.com/submit';
           <input type="hidden" name="access_key" value={formKey} />
           <input type="hidden" name="subject" value={subject} />
           <input type="hidden" name="from_name" value={siteName} />
-          <!-- Honeypot Spam-Schutz -->
-          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
         </>
       )}
+
+      <!-- Honeypot Spam-Schutz (immer rendern, in beiden Submit-Pfaden) -->
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+      <!-- URL-Honeypot — Bots füllen oft "url" oder "website" automatisch aus -->
+      <input type="text" name="url_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true" />
 
       {formType === 'contact' && (
         <>
