@@ -1,6 +1,6 @@
 {
   "name": "@cw/core",
-  "version": "0.8.18-alpha",
+  "version": "0.8.19-alpha",
   "type": "module",
   "description": "Shared Astro components, layouts and styles for Blitzsicht customer websites",
   "main": "src/index.ts",
@@ -14,7 +14,8 @@
     "./utils/forms/handle-submission": "./src/utils/forms/handle-submission.js",
     "./utils/*": "./src/utils/*.ts",
     "./types/*": "./src/types/*",
-    "./scripts/*": "./scripts/*"
+    "./scripts/*": "./scripts/*",
+    "./api/*": "./src/api/*.ts"
   },
   "scripts": {
     "build": "echo '@cw/core is a source-only Astro component library — no build step (consumers compile via their own Astro pipeline).'",
