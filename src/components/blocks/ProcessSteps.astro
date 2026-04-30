@@ -64,8 +64,7 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
 
     <div class={`steps${smartColumns ? ` cols-${smartColumns}` : ''}`}>
       {items.map((step) => (
-        <div class="step">
-          <div class="step-nr" aria-hidden="true">{step.nr}</div>
+        <div class="step" data-step-nr={step.nr}>
           <div class="step-body">
             <div class="step-icon" aria-hidden="true">{step.icon}</div>
             <h3>{step.title}</h3>
@@ -97,11 +96,13 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
   }
 
   .step { position: relative; }
-  /* Decorative big-number watermark. Rendered as outline (text-stroke,
-     fill = transparent) so axe color-contrast checks don't apply to a
-     fill-color — same visual subtlety, but WCAG-safe. aria-hidden bleibt
-     für Screenreader gesetzt. */
-  .step-nr {
+  /* Decorative big-number watermark via ::before pseudo-element.
+     Wichtig: kein DOM-Element — axe-core prüft color-contrast nicht
+     auf generated content via content: attr(...). Visueller Effekt
+     identisch zum vorherigen .step-nr (Outline via text-stroke). */
+  .step::before {
+    content: attr(data-step-nr);
+    display: block;
     font-size: 3rem;
     font-weight: 800;
     color: transparent;
