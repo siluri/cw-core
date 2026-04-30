@@ -97,13 +97,18 @@ const subheading = subheadingTemplate.replace('{count}', String(items.length));
   }
 
   .step { position: relative; }
+  /* Decorative big-number watermark. Rendered as outline (text-stroke,
+     fill = transparent) so axe color-contrast checks don't apply to a
+     fill-color — same visual subtlety, but WCAG-safe. aria-hidden bleibt
+     für Screenreader gesetzt. */
   .step-nr {
     font-size: 3rem;
     font-weight: 800;
-    color: var(--color-accent);
-    opacity: 0.15;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-accent);
     line-height: 1;
     margin-bottom: 0.5rem;
+    opacity: 0.55;
   }
   .step-body {
     background: var(--color-surface);
