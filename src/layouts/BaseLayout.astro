@@ -65,6 +65,17 @@ export interface SchemaProps {
   service?: { label: string; shortDesc?: string; href: string };
   faqs?: Array<{ question: string; answer: string }> | readonly Array<{ question: string; answer: string }>;
   knowsAbout?: string[] | readonly string[];
+  founder?: {
+    name: string;
+    jobTitle?: string;
+    description?: string;
+    image?: string;
+    email?: string;
+    phone?: string;
+    knowsAbout?: string[] | readonly string[];
+    credentials?: string[] | readonly string[];
+    sameAs?: string[] | readonly string[];
+  };
 }
 
 interface Props {
@@ -225,6 +236,7 @@ const ogImageUrl = new URL(resolvedOgImage, siteUrl).toString();
         service={schema.service}
         faqs={schema.faqs}
         knowsAbout={schema.knowsAbout}
+        founder={schema.founder}
       />
     )}
 
