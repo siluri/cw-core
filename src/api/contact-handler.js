@@ -1,4 +1,6 @@
 // @ts-check
+import { buildLeadEmail } from '../utils/forms/build-lead-email.js';
+
 /**
  * @cw/core – createContactHandler
  *
@@ -277,18 +279,17 @@ export function createContactHandler(config) {
       return;
     }
 
-    /** @type {string[]} */
-    const lines = [];
-    if (name) lines.push(`Name: ${name}`);
-    lines.push(`Email: ${email}`);
-    if (company) lines.push(`Unternehmen: ${company}`);
-    if (phone) lines.push(`Telefon: ${phone}`);
-    if (website) lines.push(`Website: ${website}`);
-    if (message) {
-      lines.push('');
-      lines.push('Nachricht:');
-      lines.push(message);
-    }
+    const mail = buildLeadEmail({
+      siteName: fromName,
+      fromAddress: fromEmail,
+      leadName: name,
+      leadEmail: email,
+      leadCompany: company,
+      leadPhone: phone,
+      leadWebsite: website,
+      leadMessage: message,
+      subject,
+    });
 
     try {
       const r = await fetch('https://api.resend.com/emails', {
@@ -298,11 +299,12 @@ export function createContactHandler(config) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: `${fromName} <${fromEmail}>`,
+          from: mail.fromHeader,
           to: recipient,
           reply_to: email,
-          subject,
-          text: lines.join('\n'),
+          subject: mail.subject,
+          html: mail.html,
+          text: mail.text,
         }),
       });
       if (!r.ok) {
