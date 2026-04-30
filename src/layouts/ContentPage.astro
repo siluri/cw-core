@@ -23,6 +23,7 @@
 import BaseLayout, { type SchemaProps } from './BaseLayout.astro';
 import Header, { type NavItem } from '../components/layout/Header.astro';
 import Footer, { type FooterLink } from '../components/layout/Footer.astro';
+import TurnstilePreClearance from '../components/forms/TurnstilePreClearance.astro';
 
 export interface HeaderConfig {
   logoSrc?: string;
@@ -79,6 +80,8 @@ interface Props {
   schema?: SchemaProps;
   header?: HeaderConfig;
   footer: FooterConfig;
+  /** See LandingPage.turnstileSiteKey — site-wide Pre-Clearance widget. */
+  turnstileSiteKey?: string;
 }
 
 const {
@@ -98,6 +101,7 @@ const {
   schema,
   header = {},
   footer,
+  turnstileSiteKey,
 } = Astro.props;
 ---
 <BaseLayout
@@ -116,6 +120,7 @@ const {
   plausibleEndpoint={plausibleEndpoint}
   schema={schema}
 >
+  <TurnstilePreClearance sitekey={turnstileSiteKey} />
   <Header
     siteName={siteName}
     logoSrc={header.logoSrc}

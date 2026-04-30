@@ -32,6 +32,7 @@ import Footer, { type FooterLink } from '../components/layout/Footer.astro';
 import SmoothScroll from '../components/motion/SmoothScroll.astro';
 import ScrollProgress from '../components/motion/ScrollProgress.astro';
 import CustomCursor from '../components/motion/CustomCursor.astro';
+import TurnstilePreClearance from '../components/forms/TurnstilePreClearance.astro';
 
 export interface MotionLayerConfig {
   /** Enable Lenis smooth-scroll globally. Requires `lenis` peer dep. */
@@ -120,6 +121,14 @@ interface Props {
   footer: FooterConfig;
   /** Opt-in site-wide motion layer (smooth scroll, progress bar, custom cursor). */
   motion?: MotionLayerConfig;
+  /**
+   * Cloudflare Turnstile site key for site-wide Pre-Clearance.
+   * Renders an invisible widget on every page so visitors receive a
+   * `cf_clearance` cookie without interaction. Requires `clearance_level:
+   * "non_interactive"` configured on the Turnstile widget. Skip this prop
+   * to disable Pre-Clearance for a customer.
+   */
+  turnstileSiteKey?: string;
 }
 
 const {
@@ -142,6 +151,7 @@ const {
   header = {},
   footer,
   motion,
+  turnstileSiteKey,
 } = Astro.props;
 ---
 <BaseLayout
@@ -166,6 +176,7 @@ const {
   {motion?.smoothScroll && <SmoothScroll />}
   {motion?.progress && <ScrollProgress />}
   {motion?.cursor && <CustomCursor />}
+  <TurnstilePreClearance sitekey={turnstileSiteKey} />
   <Header
     siteName={siteName}
     logoSrc={header.logoSrc}
