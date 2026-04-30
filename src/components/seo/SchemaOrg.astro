@@ -40,6 +40,30 @@ export interface EmployeeData {
   credentials?: string[] | readonly string[];
 }
 
+/**
+ * Founder/Owner für E-E-A-T (Google + KI-Quellvertrauen).
+ * Mindestens `name` setzen — alles andere optional. Erscheint als eigenständige
+ * Person-Entity mit @id und wird auf der Organization als `founder` referenziert,
+ * sodass `<a rel="author" href="#person-...">` aus dem sichtbaren Markup auf
+ * dieselbe Entity verweisen kann.
+ */
+export interface FounderData {
+  name: string;
+  jobTitle?: string;
+  /** Bio/Beschreibung — z.B. „Seit 1998 im GaLaBau, Galabau-Meister 2010". */
+  description?: string;
+  /** Profilfoto-URL (absolute oder relativ zur Site-URL). */
+  image?: string;
+  email?: string;
+  phone?: string;
+  /** Themen die der Founder beherrscht — getrennt von knowsAbout der Organization. */
+  knowsAbout?: string[] | readonly string[];
+  /** Credentials/Ausbildungen/Mitgliedschaften. */
+  credentials?: string[] | readonly string[];
+  /** Profile-URLs für Cross-Identity (LinkedIn, Xing). Werden als sameAs gerendert. */
+  sameAs?: string[] | readonly string[];
+}
+
 export interface ServiceData {
   label: string;
   shortDesc?: string;
@@ -133,6 +157,14 @@ interface Props {
    * Example: `['Immobilienbewertung', 'Verkehrswertgutachten']`
    */
   knowsAbout?: string[] | readonly string[];
+
+  /**
+   * Founder/Owner — wird als eigenständige Person-Entity mit @id gerendert
+   * und auf der Organization als `founder` referenziert. Stärkt E-E-A-T
+   * (Google + KI-Quellvertrauen). rel="author"-Links im sichtbaren Markup
+   * können via `#person-<slug>` auf dieselbe Entity zeigen.
+   */
+  founder?: FounderData;
 }
 
 const {
@@ -160,7 +192,24 @@ const {
   service,
   faqs,
   knowsAbout,
+  founder,
 } = Astro.props;
+
+// Founder/Owner Person-Entity bauen, falls Prop gesetzt.
+// @id ist stabil aus dem Namen-Slug — sichtbares rel="author" markup verlinkt darauf.
+function slugifyName(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+const founderSlug = founder?.name ? slugifyName(founder.name) : null;
+const founderId = founderSlug ? `${url}/#person-${founderSlug}` : null;
+const founderImageUrl = founder?.image
+  ? new URL(founder.image, url).toString()
+  : undefined;
 
 // areaServed as Place[] is more precise than a raw string for multi-city GEO.
 // Single string stays as-is (covers "DE" country-level and simple city cases).
@@ -274,7 +323,41 @@ const localBusinessSchema = {
       }
     : {}),
   ...(knowsAbout && knowsAbout.length ? { knowsAbout: [...knowsAbout] } : {}),
+  ...(founderId ? { founder: { '@id': founderId } } : {}),
 } as unknown as WithContext<LocalBusiness>;
+
+// Standalone Person-Schema für Founder (E-E-A-T).
+// Wird als eigener JSON-LD-Block emittiert UND von LocalBusiness via founder.@id referenziert.
+const founderSchema = founder && founderId
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      '@id': founderId,
+      name: founder.name,
+      ...(founder.jobTitle ? { jobTitle: founder.jobTitle } : {}),
+      ...(founder.description ? { description: founder.description } : {}),
+      ...(founderImageUrl ? { image: founderImageUrl } : {}),
+      ...(founder.email ? { email: founder.email } : {}),
+      ...(founder.phone ? { telephone: founder.phone } : {}),
+      worksFor: { '@id': orgId },
+      ...(founder.knowsAbout && founder.knowsAbout.length
+        ? { knowsAbout: [...founder.knowsAbout] }
+        : {}),
+      ...(founder.credentials && founder.credentials.length
+        ? {
+            hasCredential: [...founder.credentials].map((c) => ({
+              '@type': 'EducationalOccupationalCredential',
+              credentialCategory: 'certification',
+              name: c,
+            })),
+          }
+        : {}),
+      ...(founder.sameAs && founder.sameAs.length
+        ? { sameAs: [...founder.sameAs] }
+        : {}),
+      url: `${url}/#${founderSlug}`,
+    }
+  : null;
 
 const webSiteSchema = {
   '@context': 'https://schema.org',
@@ -321,5 +404,6 @@ const serviceSchema = service
 ---
 <script is:inline type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
 <script is:inline type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+{founderSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(founderSchema)} />}
 {faqSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 {serviceSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />}
